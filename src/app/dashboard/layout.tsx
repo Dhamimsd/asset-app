@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const user = {
     _id: userDoc._id.toString(),
-    email: userDoc.email,
+    name: userDoc.name,
     lastLogin: userDoc.lastLogin,
   };
 
