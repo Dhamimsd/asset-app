@@ -41,7 +41,6 @@ export async function GET() {
         };
 
         try {
-          // Only fetch status if asset exists
           if (emp.mouse_id) {
             const mouse = await Mouse.findById(emp.mouse_id).select("status");
             if (mouse) assetStatuses.mouse_status = mouse.status;
@@ -93,11 +92,19 @@ export async function POST(req: Request) {
     // Generate new employee ID
     const newId = await getNextEmployeeId();
 
-    // Remove empty optional fields to avoid storing empty strings
+    // Clean empty optional fields
     const optionalFields = ["keyboard_id","mouse_id","pc_id","heatset_id","laptop_id","phone_id"];
     optionalFields.forEach((key) => {
       if (!body[key]) delete body[key];
     });
+
+    // Set default employment_type if missing
+    if (!body.employment_type) body.employment_type = "Permanent";
+
+    // Convert temp_end_date to Date if provided
+    if (body.temp_end_date) {
+      body.temp_end_date = new Date(body.temp_end_date);
+    }
 
     const newEmployee = new Employee({ _id: newId, ...body });
     await newEmployee.save();

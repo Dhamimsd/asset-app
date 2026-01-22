@@ -21,7 +21,7 @@ export const User = models.User || model<IUser>("User", UserSchema);
 
 // ---------------- Employee ----------------
 export interface IEmployee {
-  _id: string; 
+  _id: string;
   employee_name: string;
   department: string;
   keyboard_id?: string;
@@ -37,8 +37,11 @@ export interface IEmployee {
   phone_status?: string;
   phone_id?: string;
   status?: string;
+  employment_type: "Temporary" | "Permanent";
+  temp_end_date?: string;
   createdAt?: Date;
   updatedAt?: Date;
+
 }
 
 const EmployeeSchema = new Schema<IEmployee>(
@@ -59,10 +62,17 @@ const EmployeeSchema = new Schema<IEmployee>(
     laptop_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     phone_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     status: {
-  type: String,
-  enum: ["ACTIVE", "INACTIVE"], // must match string exactly
-  default: "ACTIVE",
-},
+      type: String,
+      enum: ["ACTIVE", "INACTIVE"], 
+      default: "ACTIVE",
+    },
+    employment_type: {
+      type: String,
+      enum: ["Temporary", "Permanent"],
+      default: "Permanent",
+      required: true,
+    },
+    temp_end_date: { type: Date, required: false },
 
   },
   { timestamps: true }

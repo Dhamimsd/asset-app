@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { IEmployee, IMouse, IKeyboard, IPc ,IHeatset,ILaptop,IPhone} from "@/lib/model";
+import { IEmployee, IMouse, IKeyboard, IPc, IHeatset, ILaptop, IPhone } from "@/lib/model";
 import { Input } from "../ui/input";
 import {
   Form,
@@ -42,6 +42,8 @@ type EmployeeFormValues = {
   laptop_id?: string;
   phone_id?: string;
   status: string;
+  employment_type: "Temporary" | "Permanent";
+  temp_end_date?: string;
 };
 
 type EmployeeFormProps = {
@@ -50,7 +52,7 @@ type EmployeeFormProps = {
   onSave: (data: IEmployee) => void;
 };
 
-type AssetType = "mouse" | "keyboard" | "pc" | "heatset" | "laptop"|"phone";
+type AssetType = "mouse" | "keyboard" | "pc" | "heatset" | "laptop" | "phone";
 
 const STATUSES = ["ACTIVE", "INACTIVE"];
 
@@ -123,6 +125,8 @@ export default function EmployeeForm({
       laptop_id: rowData?.laptop_id || "",
       phone_id: rowData?.phone_id || "",
       status: rowData?.status || STATUSES[0],
+      employment_type: rowData?.employment_type || "Permanent",
+      temp_end_date: rowData?.temp_end_date || "",
     },
   });
 
@@ -139,6 +143,8 @@ export default function EmployeeForm({
         heatset_id: rowData.heatset_id || "",
         laptop_id: rowData.laptop_id || "",
         status: rowData.status,
+        employment_type: rowData?.employment_type || "Permanent",
+        temp_end_date: rowData?.temp_end_date || "",
       });
     }
   }, [rowData, reset]);
@@ -189,211 +195,254 @@ export default function EmployeeForm({
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[70vh] px-2">
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {["employee_name", "department"].map((name) => (
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {["employee_name", "department"].map((name) => (
+                <FormField
+                  key={name}
+                  control={form.control}
+                  name={name as any}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{name.replace("_", " ")}</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+
+
               <FormField
-                key={name}
                 control={form.control}
-                name={name as any}
+                name="employment_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{name.replace("_", " ")}</FormLabel>
+                    <FormLabel>Employment Type</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <div className="flex gap-4">
+                        {["Temporary", "Permanent"].map((type) => (
+                          <label key={type} className="flex items-center gap-2">
+                            <input
+                              type="radio"
+                              value={type}
+                              checked={field.value === type}
+                              onChange={() => field.onChange(type)}
+                            />
+                            {type}
+                          </label>
+                        ))}
+                      </div>
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
-            ))}
 
-            {/* Mouse */}
-            <FormField
-              control={form.control}
-              name="mouse_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mouse</FormLabel>
-                  <FormControl>
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Mouse" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableMice.map((m) => (
-                          <SelectItem key={m._id} value={m._id}>
-                            {m._id} - {m.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
+              {form.watch("employment_type") === "Temporary" && (
+                <FormField
+                  control={form.control}
+                  name="temp_end_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temporary End Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               )}
-            />
 
-            {/* Keyboard */}
-            <FormField
-              control={form.control}
-              name="keyboard_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Keyboard</FormLabel>
-                  <FormControl>
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Keyboard" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableKeyboards.map((k) => (
-                          <SelectItem key={k._id} value={k._id}>
-                            {k._id} - {k.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
 
-            {/* PC */}
-            <FormField
-              control={form.control}
-              name="pc_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>PC</FormLabel>
-                  <FormControl>
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select PC" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availablePcs.map((p) => (
-                          <SelectItem key={p._id} value={p._id}>
-                            {p._id} - {p.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
 
-            {/* heatset */}
-            <FormField
-              control={form.control}
-              name="heatset_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>heatset</FormLabel>
-                  <FormControl>
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select heatset" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableheatsets.map((h) => (
-                          <SelectItem key={h._id} value={h._id}>
-                            {h._id} - {h.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+              {/* Mouse */}
+              <FormField
+                control={form.control}
+                name="mouse_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mouse</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Mouse" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableMice.map((m) => (
+                            <SelectItem key={m._id} value={m._id}>
+                              {m._id} - {m.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-            {/* Laptop */}
-            <FormField
-              control={form.control}
-              name="laptop_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Laptop</FormLabel>
-                  <FormControl>
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Laptop" />
-                      </SelectTrigger>
-                       <SelectContent>
-                        {availableLaptops.map((l) => (
-                          <SelectItem key={l._id} value={l._id}>
-                            {l._id} - {l.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+              {/* Keyboard */}
+              <FormField
+                control={form.control}
+                name="keyboard_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Keyboard</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Keyboard" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableKeyboards.map((k) => (
+                            <SelectItem key={k._id} value={k._id}>
+                              {k._id} - {k.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-            {/* Phone */}
-            <FormField
-              control={form.control}
-              name="phone_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone</FormLabel>
-                  <FormControl>
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Phone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availablePhones.map((pn) => (
-                          <SelectItem key={pn._id} value={pn._id}>
-                            {pn._id} - {pn.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+              {/* PC */}
+              <FormField
+                control={form.control}
+                name="pc_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PC</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select PC" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availablePcs.map((p) => (
+                            <SelectItem key={p._id} value={p._id}>
+                              {p._id} - {p.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-           <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {STATUSES.map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />  
+              {/* heatset */}
+              <FormField
+                control={form.control}
+                name="heatset_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>heatset</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select heatset" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableheatsets.map((h) => (
+                            <SelectItem key={h._id} value={h._id}>
+                              {h._id} - {h.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit" disabled={formState.isSubmitting} variant="asia">
-                {formState.isSubmitting ? "Saving..." : "Save"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </div>
-    </DialogContent>
+              {/* Laptop */}
+              <FormField
+                control={form.control}
+                name="laptop_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Laptop</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Laptop" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableLaptops.map((l) => (
+                            <SelectItem key={l._id} value={l._id}>
+                              {l._id} - {l.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* Phone */}
+              <FormField
+                control={form.control}
+                name="phone_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Phone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availablePhones.map((pn) => (
+                            <SelectItem key={pn._id} value={pn._id}>
+                              {pn._id} - {pn.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {STATUSES.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="submit" disabled={formState.isSubmitting} variant="asia">
+                  {formState.isSubmitting ? "Saving..." : "Save"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </div>
+      </DialogContent>
     </Dialog >
   );
 }
