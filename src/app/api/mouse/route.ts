@@ -22,7 +22,7 @@ async function getNextMouseId() {
   return "M-" + result.sequence_value.toString().padStart(4, "0");
 }
 
-// GET all mouse OR filter by status
+// GET all mice OR filter by status
 export async function GET(req: Request) {
   try {
     await connectDB();
@@ -30,12 +30,20 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const status = url.searchParams.get("status"); // e.g., ?status=STORE
 
-    let filter = {};
+    let filter: any = {};
     if (status) {
       filter = { status };
     }
 
-    const mice = await Mouse.find(filter).sort({ createdAt: -1 });
+    // Fetch mice and populate assigned_to with employee info
+    const mice = await Mouse.find(filter)
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "assigned_to",
+        select: "_id employee_name department", // only include necessary fields
+      })
+      .lean(); // converts Mongoose documents to plain JS objects
+
     return NextResponse.json(mice, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -52,7 +60,13 @@ export async function POST(req: Request) {
     const newMouse = new Mouse({ _id: newId, ...body });
     await newMouse.save();
 
-    return NextResponse.json(newMouse, { status: 201 });
+    // Populate assigned_to before returning
+    const populatedMouse = await newMouse.populate({
+      path: "assigned_to",
+      select: "_id employee_name department",
+    });
+
+    return NextResponse.json(populatedMouse, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

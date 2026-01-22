@@ -3,8 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { EditIcon, Trash2 } from "lucide-react";
+import { AssignedEmployee } from "@/lib/model"; 
 
-export const assetColumns = <T extends { _id: string; brand: string;model: string; status: string; assigned_to?: string;  }>(
+export const assetColumns = <T extends { _id: string; brand: string;model: string; status: string; assigned_to?: string | AssignedEmployee | null; }>(
   onManage: (row: T) => void,
   onDelete: (row: T) => void
 ): ColumnDef<T>[] => [
@@ -24,10 +25,14 @@ export const assetColumns = <T extends { _id: string; brand: string;model: strin
     accessorKey: "status",
     header: "Status",
   },
-  {
-    accessorKey: "assigned_to",
+ {
     header: "Assigned To",
-    cell: ({ row }) => row.original.assigned_to || "—", 
+    cell: ({ row }) => {
+      const assigned = row.original.assigned_to;
+      if (!assigned) return "—";
+      if (typeof assigned === "string") return assigned;
+      return assigned.employee_name;
+    },
   },
   {
     id: "actions",

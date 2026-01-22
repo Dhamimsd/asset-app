@@ -21,7 +21,7 @@ export const User = models.User || model<IUser>("User", UserSchema);
 
 // ---------------- Employee ----------------
 export interface IEmployee {
-  _id: string; // <-- string ID
+  _id: string; 
   employee_name: string;
   department: string;
   keyboard_id?: string;
@@ -70,6 +70,13 @@ const EmployeeSchema = new Schema<IEmployee>(
 
 export const Employee = models.Employee || model<IEmployee>("Employee", EmployeeSchema, "employee");
 
+export interface AssignedEmployee {
+  _id: string;
+  employee_name: string;
+  department: string;
+}
+
+
 export interface IMouse {
   _id: string; // <-- string ID
   brand: string;
@@ -77,7 +84,7 @@ export interface IMouse {
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
-  assigned_to?: string;
+  assigned_to?: string | AssignedEmployee | null;
 }
 
 const MouseSchema = new Schema<IMouse>(
@@ -102,7 +109,7 @@ export interface IKeyboard {
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
-  assigned_to?: string;
+  assigned_to?: string | AssignedEmployee | null;
 }
 
 const KeyboardSchema = new Schema<IKeyboard>(
@@ -128,7 +135,7 @@ export interface IPc {
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
-  assigned_to?: string;
+  assigned_to?: string | AssignedEmployee | null;
 }
 
 const PcSchema = new Schema<IPc>(
@@ -154,7 +161,7 @@ export interface ILaptop {
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
-  assigned_to?: string;
+  assigned_to?: string | AssignedEmployee | null;
 }
 
 const LaptopSchema = new Schema<ILaptop>(
@@ -180,7 +187,7 @@ export interface IHeatset {
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
-  assigned_to?: string;
+  assigned_to?: string | AssignedEmployee | null;
 }
 
 const heatsetSchema = new Schema<IHeatset>(
@@ -206,7 +213,7 @@ export interface IPhone {
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
-  assigned_to?: string;
+  assigned_to?: string | AssignedEmployee | null;
 }
 
 const phoneSchema = new Schema<IPhone>(

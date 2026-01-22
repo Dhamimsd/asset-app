@@ -34,8 +34,14 @@ export async function GET(req: Request) {
       filter = { status };
     }
 
-    const keyboards = await Keyboard.find(filter).sort({ createdAt: -1 });
-    return NextResponse.json(keyboards, { status: 200 });
+    const keyboard = await Keyboard.find(filter)
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "assigned_to",
+            select: "_id employee_name department", 
+          })
+          .lean();
+          return NextResponse.json(keyboard, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -51,7 +57,13 @@ export async function POST(req: Request) {
     const newKeyboard = new Keyboard({ _id: newId, ...body });
     await newKeyboard.save();
 
-    return NextResponse.json(newKeyboard, { status: 201 });
+    const populatedKeyboard = await newKeyboard.populate({
+      path: "assigned_to",
+      select: "_id employee_name department",
+    });
+
+
+    return NextResponse.json(populatedKeyboard, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

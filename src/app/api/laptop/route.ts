@@ -1,4 +1,3 @@
-// app/api/mouse/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
 import mongoose from "mongoose";
@@ -11,7 +10,7 @@ const CounterSchema = new mongoose.Schema({
 });
 const Counter = mongoose.models.Counter || mongoose.model("Counter", CounterSchema, "counters");
 
-// Generate next M-xxxx ID
+// Generate next L-xxxx ID
 async function getNextLaptopId() {
   await connectDB();
   const result = await Counter.findOneAndUpdate(
@@ -35,8 +34,14 @@ export async function GET(req: Request) {
       filter = { status };
     }
 
-    const laptops = await Laptop.find(filter).sort({ createdAt: -1 });
-    return NextResponse.json(laptops, { status: 200 });
+    const laptop = await Laptop.find(filter)
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "assigned_to",
+            select: "_id employee_name department", 
+          })
+          .lean();
+          return NextResponse.json(laptop, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -52,7 +57,13 @@ export async function POST(req: Request) {
     const newLaptop = new Laptop({ _id: newId, ...body });
     await newLaptop.save();
 
-    return NextResponse.json(newLaptop, { status: 201 });
+    const populatedLaptop = await newLaptop.populate({
+      path: "assigned_to",
+      select: "_id employee_name department",
+    });
+
+
+    return NextResponse.json(populatedLaptop, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

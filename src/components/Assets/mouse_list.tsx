@@ -82,10 +82,10 @@ export default function MousePage() {
     const exists = data.find((m) => m._id === mouse._id);
     if (exists) {
       setData((prev) => prev.map((m) => (m._id === mouse._id ? mouse : m)));
-      
+
     } else {
       setData((prev) => [mouse, ...prev]);
-      
+
     }
     setIsFormOpen(false);
   };

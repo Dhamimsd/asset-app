@@ -1,4 +1,3 @@
-// app/api/mouse/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
 import mongoose from "mongoose";
@@ -11,7 +10,7 @@ const CounterSchema = new mongoose.Schema({
 });
 const Counter = mongoose.models.Counter || mongoose.model("Counter", CounterSchema, "counters");
 
-// Generate next P-xxxx ID
+// Generate next PN-xxxx ID
 async function getNextPhoneId() {
   await connectDB();
   const result = await Counter.findOneAndUpdate(
@@ -35,8 +34,14 @@ export async function GET(req: Request) {
       filter = { status };
     }
 
-    const phones = await Phone.find(filter).sort({ createdAt: -1 });
-    return NextResponse.json(phones, { status: 200 });
+    const phone = await Phone.find(filter)
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "assigned_to",
+            select: "_id employee_name department", 
+          })
+          .lean();
+          return NextResponse.json(phone, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -52,7 +57,13 @@ export async function POST(req: Request) {
     const newPhone = new Phone({ _id: newId, ...body });
     await newPhone.save();
 
-    return NextResponse.json(newPhone, { status: 201 });
+    const populatedPhone = await newPhone.populate({
+      path: "assigned_to",
+      select: "_id employee_name department",
+    });
+
+
+    return NextResponse.json(populatedPhone, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

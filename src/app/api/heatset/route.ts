@@ -1,8 +1,7 @@
-// app/api/mouse/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
 import mongoose from "mongoose";
-import { Heatset} from "@/lib/model";
+import { Heatset } from "@/lib/model";
 
 // Counter schema for custom IDs
 const CounterSchema = new mongoose.Schema({
@@ -35,14 +34,20 @@ export async function GET(req: Request) {
       filter = { status };
     }
 
-    const heatsets = await Heatset.find(filter).sort({ createdAt: -1 });
-    return NextResponse.json(heatsets, { status: 200 });
+    const heatset = await Heatset.find(filter)
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "assigned_to",
+            select: "_id employee_name department", 
+          })
+          .lean();
+          return NextResponse.json(heatset, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-// POST: add new laptop
+// POST: add new heatset
 export async function POST(req: Request) {
   try {
     await connectDB();
@@ -52,7 +57,13 @@ export async function POST(req: Request) {
     const newHeatset = new Heatset({ _id: newId, ...body });
     await newHeatset.save();
 
-    return NextResponse.json(newHeatset, { status: 201 });
+    const populatedHeatset = await newHeatset.populate({
+      path: "assigned_to",
+      select: "_id employee_name department",
+    });
+
+
+    return NextResponse.json(populatedHeatset, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

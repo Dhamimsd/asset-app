@@ -1,4 +1,3 @@
-// app/api/mouse/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
 import mongoose from "mongoose";
@@ -35,14 +34,20 @@ export async function GET(req: Request) {
       filter = { status };
     }
 
-    const pcs = await Pc.find(filter).sort({ createdAt: -1 });
-    return NextResponse.json(pcs, { status: 200 });
+    const pc = await Pc.find(filter)
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "assigned_to",
+            select: "_id employee_name department", 
+          })
+          .lean();
+          return NextResponse.json(pc, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-// POST: add new pc
+// POST: add new PC
 export async function POST(req: Request) {
   try {
     await connectDB();
@@ -52,7 +57,13 @@ export async function POST(req: Request) {
     const newPc = new Pc({ _id: newId, ...body });
     await newPc.save();
 
-    return NextResponse.json(newPc, { status: 201 });
+    const populatedPc = await newPc.populate({
+      path: "assigned_to",
+      select: "_id employee_name department",
+    });
+
+
+    return NextResponse.json(populatedPc, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
