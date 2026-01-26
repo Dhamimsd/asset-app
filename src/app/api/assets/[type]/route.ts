@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
-import { Mouse, Keyboard, Pc, Laptop, Heatset, Phone } from "@/lib/model";
+import { Mouse, Keyboard, Pc, Laptop, Heatset, Phone ,Monitor} from "@/lib/model";
 
 const MODEL_MAP: any = {
   mouse: Mouse,
@@ -9,6 +9,7 @@ const MODEL_MAP: any = {
   laptop: Laptop,
   heatset: Heatset,
     phone: Phone,
+    monitor: Monitor,
 };
 
 export async function GET(

@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { IEmployee, IMouse, IKeyboard, IPc, IHeatset, ILaptop, IPhone } from "@/lib/model";
+import { IEmployee, IMouse, IKeyboard, IPc, IHeatset, ILaptop, IPhone ,IMonitor} from "@/lib/model";
 import { Input } from "../ui/input";
 import {
   Form,
@@ -41,6 +41,7 @@ type EmployeeFormValues = {
   heatset_id?: string;
   laptop_id?: string;
   phone_id?: string;
+  monitor_id?: string;
   status: string;
   employment_type: "Temporary" | "Permanent";
   temp_end_date?: string;
@@ -52,9 +53,10 @@ type EmployeeFormProps = {
   onSave: (data: IEmployee) => void;
 };
 
-type AssetType = "mouse" | "keyboard" | "pc" | "heatset" | "laptop" | "phone";
+type AssetType = "mouse" | "keyboard" | "pc" | "heatset" | "laptop" | "phone"| "monitor";
 
 const STATUSES = ["ACTIVE", "INACTIVE"];
+const DEPARTMENTS = ["ADMIN","IT","SOLO","SALES","VA","PICKME","QA","RENTION","DIGITAL","DEVELOPERS","BDM","ACCOUNTS","HR"];
 
 /* -------------------- HELPERS -------------------- */
 
@@ -113,6 +115,7 @@ export default function EmployeeForm({
   const availableheatsets = useAvailableAssets<IHeatset>("heatset");
   const availableLaptops = useAvailableAssets<ILaptop>("laptop");
   const availablePhones = useAvailableAssets<IPhone>("phone");
+  const availableMonitors = useAvailableAssets<IMonitor>("monitor");
 
   const form = useForm<EmployeeFormValues>({
     defaultValues: {
@@ -124,6 +127,7 @@ export default function EmployeeForm({
       heatset_id: rowData?.heatset_id || "",
       laptop_id: rowData?.laptop_id || "",
       phone_id: rowData?.phone_id || "",
+      monitor_id: rowData?.monitor_id || "",
       status: rowData?.status || STATUSES[0],
       employment_type: rowData?.employment_type || "Permanent",
       temp_end_date: rowData?.temp_end_date || "",
@@ -142,6 +146,8 @@ export default function EmployeeForm({
         pc_id: rowData.pc_id || "",
         heatset_id: rowData.heatset_id || "",
         laptop_id: rowData.laptop_id || "",
+        phone_id: rowData.phone_id || "",
+        monitor_id: rowData.monitor_id || "",
         status: rowData.status,
         employment_type: rowData?.employment_type || "Permanent",
         temp_end_date: rowData?.temp_end_date || "",
@@ -152,7 +158,7 @@ export default function EmployeeForm({
   const onSubmit = async (values: EmployeeFormValues) => {
     try {
       const payload: any = { ...values };
-      ["keyboard_id", "mouse_id", "pc_id", "heatset_id", "laptop_id", "phone_id"].forEach(
+      ["keyboard_id", "mouse_id", "pc_id", "heatset_id", "laptop_id", "phone_id", "monitor_id"].forEach(
         (k) => !payload[k] && delete payload[k]
       );
 
@@ -175,6 +181,7 @@ export default function EmployeeForm({
         updateAssetAssignment("heatset", rowData?.heatset_id, values.heatset_id, employee._id),
         updateAssetAssignment("laptop", rowData?.laptop_id, values.laptop_id, employee._id),
         updateAssetAssignment("phone", rowData?.phone_id, values.phone_id, employee._id),
+        updateAssetAssignment("monitor", rowData?.monitor_id, values.monitor_id, employee._id),
       ]);
 
       onSave(employee);
@@ -197,7 +204,7 @@ export default function EmployeeForm({
         <div className="overflow-y-auto max-h-[70vh] px-2">
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {["employee_name", "department"].map((name) => (
+              {["employee_name"].map((name) => (
                 <FormField
                   key={name}
                   control={form.control}
@@ -214,6 +221,30 @@ export default function EmployeeForm({
                 />
               ))}
 
+               <FormField
+                control={form.control}
+                name="department"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Department</FormLabel>
+                    <FormControl>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DEPARTMENTS.map((dept) => (
+                            <SelectItem key={dept} value={dept}>
+                              {dept}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+                       
 
               <FormField
                 control={form.control}
@@ -398,6 +429,30 @@ export default function EmployeeForm({
                           {availablePhones.map((pn) => (
                             <SelectItem key={pn._id} value={pn._id}>
                               {pn._id} - {pn.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="monitor_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Monitor</FormLabel>
+                    <FormControl>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Monitor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableMonitors.map((mo) => (
+                            <SelectItem key={mo._id} value={mo._id}>
+                              {mo._id} - {mo.brand}
                             </SelectItem>
                           ))}
                         </SelectContent>

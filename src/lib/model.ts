@@ -35,7 +35,9 @@ export interface IEmployee {
   heatset_status?: string;
   laptop_status?: string;
   phone_status?: string;
+  monitor_status?: string;
   phone_id?: string;
+  monitor_id?: string;
   status?: string;
   employment_type: "Temporary" | "Permanent";
   temp_end_date?: string;
@@ -55,12 +57,14 @@ const EmployeeSchema = new Schema<IEmployee>(
     heatset_id: { type: String, ref: "heatset", required: false },
     laptop_id: { type: String, ref: "Laptop", required: false },
     phone_id: { type: String, ref: "Phone", required: false },
+    monitor_id: { type: String, ref: "Monitor", required: false },
     mouse_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     keyboard_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     pc_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     heatset_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     laptop_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     phone_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
+    monitor_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     status: {
       type: String,
       enum: ["ACTIVE", "INACTIVE"], 

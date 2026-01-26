@@ -163,6 +163,30 @@ export const employeeColumns = (
         );
       },
     },
+
+     {
+      accessorKey: "monitor_id",
+      header: "Monitor ID",
+      cell: ({ row }) => {
+        const { monitor_id, monitor_status } = row.original;
+
+        if (monitor_status === "STORE" || !monitor_id) {
+          return null;
+        }
+
+        return (
+          <div className="relative flex flex-col w-full h-10">
+            <div className="flex justify-end">
+              <StatusDot status={monitor_status} />
+            </div>
+
+            <div className="mt-1 flex justify-start">
+              <span className="text-sm font-medium">{monitor_id}</span>
+            </div>
+          </div>
+        );
+      },
+    },
     // {
     //   accessorKey: "status",
     //   header: "Status",
