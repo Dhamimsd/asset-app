@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../ui/dialog";
+import { downloadEmployeePDF } from "@/lib/employeePdf";
 
 export default function EmployeesPage() {
   const [data, setData] = useState<IEmployee[]>([]);
@@ -83,8 +84,20 @@ export default function EmployeesPage() {
     setIsFormOpen(false);
   };
 
+  const handleDownloadReport = () => {
+  if (!data.length) {
+    toast.error("No employee data to export");
+    return;
+  }
+
+  downloadEmployeePDF(data);
+};
   return (
     <div className="space-y-6 py-5">
+      <Button onClick={handleDownloadReport} variant="outline" size="sm">
+  Download Employee PDF
+</Button>
+
       <Button onClick={handleAdd} variant="asia" size="sm">
         Add Employee
       </Button>

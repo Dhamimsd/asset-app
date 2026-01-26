@@ -5,15 +5,22 @@ import { Button } from "@/components/ui/button";
 import { IEmployee } from "@/lib/model";
 import { EditIcon, Trash2 } from "lucide-react";
 import StatusDot from "@/components/common/status";
+import Profile from "@/components/common/profile";
+import { useState } from "react";
 
 export const employeeColumns = (
   onManage: (row: IEmployee) => void,
   onDelete: (row: IEmployee) => void
 ): ColumnDef<IEmployee>[] => [
     {
-      accessorKey: "_id",
-      header: "Employee ID",
+    accessorKey: "_id",
+    header: "ID",
+    cell: ({ row }) => {
+      const id = row.getValue("_id") as string;
+      return <EmployeeNameCell id={id} />;
     },
+    
+  },
     {
       accessorKey: "employee_name",
       header: "Employee Name",
@@ -221,3 +228,21 @@ export const employeeColumns = (
 
 
   ];
+
+
+  const EmployeeNameCell = ({ id }: {id: string }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <span
+        className="cursor-pointer text-primary hover:underline"
+        onClick={() => setOpen(true)}
+      >
+        {id}
+      </span>
+
+      <Profile _id={id} open={open} onOpenChange={setOpen} />
+    </>
+  );
+};

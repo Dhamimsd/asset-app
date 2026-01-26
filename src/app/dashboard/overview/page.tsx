@@ -23,6 +23,7 @@ export default function Overview() {
           <TabsTrigger value="laptop">Laptop</TabsTrigger>
           <TabsTrigger value="headset">Headset</TabsTrigger>
           <TabsTrigger value="phone">Phone</TabsTrigger>
+          <TabsTrigger value="monitor">Monitor</TabsTrigger>
         </TabsList>
 
         <TabsContent value="mouse"><Main assetType="mouse" /></TabsContent>
@@ -31,6 +32,7 @@ export default function Overview() {
         <TabsContent value="laptop"><Main assetType="laptop" /></TabsContent>
         <TabsContent value="headset"><Main assetType="heatset" /></TabsContent>
         <TabsContent value="phone"><Main assetType="phone" /></TabsContent>
+        <TabsContent value="monitor"><Main assetType="monitor" /></TabsContent>
       </Tabs>
     </div>
   );

@@ -30,6 +30,8 @@
     "creditcards": "^4.2.0",
     "iconsax-react": "^0.0.8",
     "jsonwebtoken": "^9.0.3",
+    "jspdf": "^4.0.0",
+    "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.544.0",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.2",
