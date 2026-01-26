@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { User, Mouse, Keyboard, Monitor, Laptop, Headset, Phone } from "lucide-react";
+import { User, Mouse, Keyboard, Monitor, Laptop, Headset, Phone,Computer} from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 type Totals = {
@@ -13,6 +13,7 @@ type Totals = {
   laptops: number;
   headsets: number;
   phones: number;
+  monitors: number;
 };
 
 export default function DashboardPage() {
@@ -28,7 +29,7 @@ export default function DashboardPage() {
         const employees = await empRes.json();
 
         // Fetch assets counts for each type
-        const assetTypes = ["mouse", "keyboard", "pc", "laptop", "headset", "phone"];
+        const assetTypes = ["mouse", "keyboard", "pc", "laptop", "headset", "phone", "monitor"];
         const assetCounts: any = {};
 
         await Promise.all(
@@ -47,6 +48,7 @@ export default function DashboardPage() {
           laptops: assetCounts.laptops || 0,
           headsets: assetCounts.headsets || 0,
           phones: assetCounts.phones || 0,
+          monitors: assetCounts.monitors || 0,
         });
       } catch (err) {
         console.error(err);
@@ -70,10 +72,11 @@ export default function DashboardPage() {
   const assets = [
     { name: "Mice", icon: <Mouse size={28} className="text-blue-600 dark:text-blue-400" />, count: totals.mice },
     { name: "Keyboards", icon: <Keyboard size={28} className="text-green-600 dark:text-green-400" />, count: totals.keyboards },
-    { name: "PCs", icon: <Monitor size={28} className="text-purple-600 dark:text-purple-400" />, count: totals.pcs },
+    { name: "PCs", icon: <Computer size={28} className="text-purple-600 dark:text-purple-400" />, count: totals.pcs },
     { name: "Laptops", icon: <Laptop size={28} className="text-yellow-600 dark:text-yellow-400" />, count: totals.laptops },
     { name: "Headsets", icon: <Headset size={28} className="text-red-600 dark:text-red-400" />, count: totals.headsets },
     { name: "Phones", icon: <Phone size={28} className="text-orange-600 dark:text-orange-400" />, count: totals.phones },
+    { name: "Monitors", icon: <Monitor size={28} className="text-indigo-600 dark:text-indigo-400" />, count: totals.monitors },
   ];
 
   return (
