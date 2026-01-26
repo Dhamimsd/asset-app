@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { DataTable } from "@/components/ui/data-table";
-import { assetColumns } from "./column_ref";
+import { assetColumns } from "./column_ref1";
 import { IPc } from "@/lib/model";
 import { Button } from "../ui/button";
-import AssetForm from "./asset_form";
+import AssetForm from "./asset_form1";
 import { toast } from "sonner";
 import {
   Dialog,

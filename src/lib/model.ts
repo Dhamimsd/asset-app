@@ -138,57 +138,6 @@ const KeyboardSchema = new Schema<IKeyboard>(
 
 export const Keyboard = models.Keyboard || model<IKeyboard>("Keyboard", KeyboardSchema, "keyboard_asset");
 
-export interface IPc {
-  _id: string; // <-- string ID
-  brand: string;
-  model: string;
-  status: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  assigned_to?: string | AssignedEmployee | null;
-}
-
-const PcSchema = new Schema<IPc>(
-  {
-    _id: { type: String, required: true },
-    brand: { type: String, required: true },
-    model: { type: String, required: true },
-    status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
-    createdAt: { type: Date },
-    updatedAt: { type: Date },
-    assigned_to: { type: String, ref: "Employee", default: null },
-  },
-
-  { timestamps: true }
-);
-
-export const Pc = models.Pc || model<IPc>("Pc", PcSchema, "pc_asset");
-
-export interface ILaptop {
-  _id: string; // <-- string ID
-  brand: string;
-  model: string;
-  status: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  assigned_to?: string | AssignedEmployee | null;
-}
-
-const LaptopSchema = new Schema<ILaptop>(
-  {
-    _id: { type: String, required: true },
-    brand: { type: String, required: true },
-    model: { type: String, required: true },
-    status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
-    createdAt: { type: Date },
-    updatedAt: { type: Date },
-    assigned_to: { type: String, ref: "Employee", default: null },
-  },
-
-  { timestamps: true }
-);
-
-export const Laptop = models.Laptop || model<ILaptop>("Laptop", LaptopSchema, "laptop_asset");
 
 export interface IHeatset {
   _id: string; // <-- string ID
@@ -241,3 +190,93 @@ const phoneSchema = new Schema<IPhone>(
 );
 
 export const Phone = models.Phone || model<IPhone>("Phone", phoneSchema, "phone_asset");
+
+export interface IMonitor {
+  _id: string; // <-- string ID
+  brand: string;
+  model: string;
+  status: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  assigned_to?: string | AssignedEmployee | null;
+}
+
+const monitorSchema = new Schema<IMonitor>(
+  {
+    _id: { type: String, required: true },
+    brand: { type: String, required: true },
+    model: { type: String, required: true },
+    status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+    assigned_to: { type: String, ref: "Employee", default: null },
+  },
+
+  { timestamps: true }
+);
+
+export const Monitor = models.Monitor || model<IMonitor>("Monitor", monitorSchema, "monitor_asset");
+
+export interface IPc {
+  _id: string; // <-- string ID
+  brand: string;
+  model: string;
+  status: string;
+  ram: string;
+  ssd: string;
+  gen: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  assigned_to?: string | AssignedEmployee | null;
+}
+
+const PcSchema = new Schema<IPc>(
+  {
+    _id: { type: String, required: true },
+    brand: { type: String, required: true },
+    model: { type: String, required: true },
+    status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
+    ram: { type: String, required: true },
+    ssd: { type: String, required: true },
+    gen: { type: String, required: true },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+    assigned_to: { type: String, ref: "Employee", default: null },
+  },
+
+  { timestamps: true }
+);
+
+export const Pc = models.Pc || model<IPc>("Pc", PcSchema, "pc_asset");
+
+export interface ILaptop {
+  _id: string; // <-- string ID
+  brand: string;
+  model: string;
+  status: string;
+  ram: string;
+  ssd: string;
+  gen: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  assigned_to?: string | AssignedEmployee | null;
+}
+
+const LaptopSchema = new Schema<ILaptop>(
+  {
+    _id: { type: String, required: true },
+    brand: { type: String, required: true },
+    model: { type: String, required: true },
+    status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
+    ram: { type: String, required: true },
+    ssd: { type: String, required: true },
+    gen: { type: String, required: true },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+    assigned_to: { type: String, ref: "Employee", default: null },
+  },
+
+  { timestamps: true }
+);
+
+export const Laptop = models.Laptop || model<ILaptop>("Laptop", LaptopSchema, "laptop_asset");

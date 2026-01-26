@@ -31,6 +31,7 @@ import {
   MousePointer,
   Keyboard,
   Monitor,
+  Computer,
   Headphones,
   Laptop,
   Phone
@@ -56,18 +57,18 @@ interface SidebarItem {
   badge?: string;
 }
 
-// Dummy sidebar items
 const sidebarItems: SidebarItem[] = [
   { title: "Overview", icon: <LayoutGrid size={20} />, path: "/dashboard/overview" },
   { title: "Employee", icon: <UsersRound size={20} />, path: "/dashboard/employee" },
   { title: "Assets", icon: <Package size={20} />, 
   subItems: [
-    { title: "Mouse Asset", icon: <MousePointer size={16} />, path: "/dashboard/assets/mouse_Asset" },
-    { title: "Keyborad Asset", icon: <Keyboard size={16} />, path: "/dashboard/assets/keyboard_Asset" },
-    { title: "PC Asset", icon: <Monitor size={16} />, path: "/dashboard/assets/pc_Asset" },
-    { title: "Laptop Asset", icon: <Laptop size={16} />, path: "/dashboard/assets/laptop_Asset" },
-    {title:"Heatset Asset", icon:<Headphones size={16} />, path:"/dashboard/assets/heatset_Asset" },
-    {title:"Phone Asset", icon:<Phone size={16} />, path:"/dashboard/assets/phone_Asset" }
+    { title: "Mouse", icon: <MousePointer size={16} />, path: "/dashboard/assets/mouse_Asset" },
+    { title: "Keyborad", icon: <Keyboard size={16} />, path: "/dashboard/assets/keyboard_Asset" },
+    {title:"Heatset", icon:<Headphones size={16} />, path:"/dashboard/assets/heatset_Asset" },
+    {title:"Phone", icon:<Phone size={16} />, path:"/dashboard/assets/phone_Asset" },
+    {title:"Monitor", icon:<Monitor size={16} />, path:"/dashboard/assets/monitor_Asset" },
+    { title: "PC", icon: <Computer size={16} />, path: "/dashboard/assets/pc_Asset" },
+    { title: "Laptop", icon: <Laptop size={16} />, path: "/dashboard/assets/laptop_Asset" }
   ],
    },
 ];

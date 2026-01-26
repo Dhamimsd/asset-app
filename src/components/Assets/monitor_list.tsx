@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { DataTable } from "@/components/ui/data-table";
-import { assetColumns } from "./column_ref1";
-import { ILaptop } from "@/lib/model";
+import { assetColumns } from "./column_ref";
+import { IMonitor } from "@/lib/model";
 import { Button } from "../ui/button";
-import AssetForm from "./asset_form1";
+import AssetForm from "./asset_form";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -16,75 +16,75 @@ import {
   DialogDescription,
 } from "../ui/dialog";
 
-export default function LaptopPage() {
-  const [data, setData] = useState<ILaptop[]>([]);
-  const [selectedLaptop, setSelectedLaptop] = useState<ILaptop | null>(null);
+export default function MonitorPage() {
+  const [data, setData] = useState<IMonitor[]>([]);
+  const [selectedMonitor, setSelectedMonitor] = useState<IMonitor | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   // For delete dialog
-  const [laptopToDelete, setLaptopToDelete] = useState<ILaptop | null>(null);
+  const [monitorToDelete, setMonitorToDelete] = useState<IMonitor | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Fetch laptops on mount
+  // Fetch monitors on mount
   useEffect(() => {
-    fetchLaptops();
+    fetchMonitors();
   }, []);
 
-  const fetchLaptops = async () => {
+  const fetchMonitors = async () => {
     try {
-      const res = await fetch("/api/laptop", { cache: "no-store" });
+      const res = await fetch("/api/monitor", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch");
-      const laptops: ILaptop[] = await res.json();
-      setData(laptops);
+      const monitors: IMonitor[] = await res.json();
+      setData(monitors);
     } catch (err) {
-      toast.error("Failed to fetch laptops");
+      toast.error("Failed to fetch monitors");
       console.error(err);
     }
   };
 
   // Add / Edit handlers
   const handleAdd = () => {
-    setSelectedLaptop(null);
+    setSelectedMonitor(null);
     setIsFormOpen(true);
   };
 
-  const handleEdit = (laptop: ILaptop) => {
-    setSelectedLaptop(laptop);
+  const handleEdit = (monitor: IMonitor) => {
+    setSelectedMonitor(monitor);
     setIsFormOpen(true);
   };
 
   // Open delete confirmation dialog
-  const handleDeleteClick = (laptop: ILaptop) => {
-    setLaptopToDelete(laptop);
+  const handleDeleteClick = (monitor: IMonitor) => {
+    setMonitorToDelete(monitor);
     setIsDeleteDialogOpen(true);
   };
 
   // Confirm deletion
   const confirmDelete = async () => {
-    if (!laptopToDelete) return;
+    if (!monitorToDelete) return;
 
     try {
-      const res = await fetch(`/api/laptop/${laptopToDelete._id}`, { method: "DELETE" });
+      const res = await fetch(`/api/monitor/${monitorToDelete._id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
-      setData((prev) => prev.filter((m) => m._id !== laptopToDelete._id));
-      toast.success("Laptop deleted successfully");
+      setData((prev) => prev.filter((m) => m._id !== monitorToDelete._id));
+      toast.success("Monitor deleted successfully");
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Failed to delete laptop");
+      toast.error(err.message || "Failed to delete monitor");
     } finally {
       setIsDeleteDialogOpen(false);
-      setLaptopToDelete(null);
+      setMonitorToDelete(null);
     }
   };
 
   // Save handler (Add or Update)
-  const handleSave = (laptop: ILaptop) => {
-    const exists = data.find((m) => m._id === laptop._id);
+  const handleSave = (monitor: IMonitor) => {
+    const exists = data.find((m) => m._id === monitor._id);
     if (exists) {
-      setData((prev) => prev.map((m) => (m._id === laptop._id ? laptop : m)));
+      setData((prev) => prev.map((m) => (m._id === monitor._id ? monitor : m)));
       
     } else {
-      setData((prev) => [laptop, ...prev]);
+      setData((prev) => [monitor, ...prev]);
       
     }
     setIsFormOpen(false);
@@ -92,9 +92,9 @@ export default function LaptopPage() {
 
   return (
     <div className="space-y-6 py-5">
-      {/* Add Laptop Button */}
+      {/* Add Monitor Button */}
       <Button onClick={handleAdd} variant="asia" size="sm">
-        Add Laptop
+        Add Monitor
       </Button>
 
       {/* DataTable */}
@@ -106,12 +106,12 @@ export default function LaptopPage() {
 
       {/* AssetForm Dialog */}
       {isFormOpen && (
-        <AssetForm<ILaptop>
-          rowData={selectedLaptop ?? undefined}
+        <AssetForm<IMonitor>
+          rowData={selectedMonitor ?? undefined}
           onClose={() => setIsFormOpen(false)}
           onSave={handleSave}
-          apiEndpoint="/api/laptop"
-          title={selectedLaptop ? "Edit Laptop" : "Add Laptop"}
+          apiEndpoint="/api/monitor"
+          title={selectedMonitor ? "Edit Monitor" : "Add Monitor"}
         />
       )}
 
@@ -119,10 +119,10 @@ export default function LaptopPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Laptop</DialogTitle>
+            <DialogTitle>Delete Monitor</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete{" "}
-              <span className="font-semibold">{laptopToDelete?._id}</span>? This
+              <span className="font-semibold">{monitorToDelete?._id}</span>? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>
