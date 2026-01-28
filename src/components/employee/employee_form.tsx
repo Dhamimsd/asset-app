@@ -11,7 +11,16 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { IEmployee, IMouse, IKeyboard, IPc, IHeatset, ILaptop, IPhone ,IMonitor} from "@/lib/model";
+import {
+  IEmployee,
+  IMouse,
+  IKeyboard,
+  IPc,
+  IHeatset,
+  ILaptop,
+  IPhone,
+  IMonitor,
+} from "@/lib/model";
 import { Input } from "../ui/input";
 import {
   Form,
@@ -29,6 +38,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Rows } from "lucide-react";
 
 /* -------------------- TYPES -------------------- */
 
@@ -45,6 +55,7 @@ type EmployeeFormValues = {
   status: string;
   employment_type: "Temporary" | "Permanent";
   temp_end_date?: string;
+  note?: string;
 };
 
 type EmployeeFormProps = {
@@ -53,10 +64,31 @@ type EmployeeFormProps = {
   onSave: (data: IEmployee) => void;
 };
 
-type AssetType = "mouse" | "keyboard" | "pc" | "heatset" | "laptop" | "phone"| "monitor";
+type AssetType =
+  | "mouse"
+  | "keyboard"
+  | "pc"
+  | "heatset"
+  | "laptop"
+  | "phone"
+  | "monitor";
 
 const STATUSES = ["ACTIVE", "INACTIVE"];
-const DEPARTMENTS = ["ADMIN","IT","SOLO","SALES","VA","PICKME","QA","RENTION","DIGITAL","DEVELOPERS","BDM","ACCOUNTS","HR"];
+const DEPARTMENTS = [
+  "ADMIN",
+  "IT",
+  "SOLO",
+  "SALES",
+  "VA",
+  "PICKME",
+  "QA",
+  "RENTION",
+  "DIGITAL",
+  "DEVELOPERS",
+  "BDM",
+  "ACCOUNTS",
+  "HR",
+];
 
 /* -------------------- HELPERS -------------------- */
 
@@ -83,7 +115,7 @@ async function updateAssetAssignment(
   assetType: AssetType,
   oldId: string | undefined,
   newId: string | undefined,
-  employeeId: string
+  employeeId: string,
 ) {
   if (oldId && oldId !== newId) {
     await fetch(`/api/${assetType}/${oldId}`, {
@@ -131,6 +163,7 @@ export default function EmployeeForm({
       status: rowData?.status || STATUSES[0],
       employment_type: rowData?.employment_type || "Permanent",
       temp_end_date: rowData?.temp_end_date || "",
+      note: rowData?.note || "",
     },
   });
 
@@ -151,6 +184,7 @@ export default function EmployeeForm({
         status: rowData.status,
         employment_type: rowData?.employment_type || "Permanent",
         temp_end_date: rowData?.temp_end_date || "",
+        note: rowData?.note || "",
       });
     }
   }, [rowData, reset]);
@@ -158,9 +192,15 @@ export default function EmployeeForm({
   const onSubmit = async (values: EmployeeFormValues) => {
     try {
       const payload: any = { ...values };
-      ["keyboard_id", "mouse_id", "pc_id", "heatset_id", "laptop_id", "phone_id", "monitor_id"].forEach(
-        (k) => !payload[k] && delete payload[k]
-      );
+      [
+        "keyboard_id",
+        "mouse_id",
+        "pc_id",
+        "heatset_id",
+        "laptop_id",
+        "phone_id",
+        "monitor_id",
+      ].forEach((k) => !payload[k] && delete payload[k]);
 
       const res = await fetch(
         rowData ? `/api/employee/${rowData._id}` : "/api/employee",
@@ -168,20 +208,50 @@ export default function EmployeeForm({
           method: rowData ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }
+        },
       );
 
       if (!res.ok) throw new Error("Failed to save employee");
       const employee = await res.json();
 
       await Promise.all([
-        updateAssetAssignment("mouse", rowData?.mouse_id, values.mouse_id, employee._id),
-        updateAssetAssignment("keyboard", rowData?.keyboard_id, values.keyboard_id, employee._id),
+        updateAssetAssignment(
+          "mouse",
+          rowData?.mouse_id,
+          values.mouse_id,
+          employee._id,
+        ),
+        updateAssetAssignment(
+          "keyboard",
+          rowData?.keyboard_id,
+          values.keyboard_id,
+          employee._id,
+        ),
         updateAssetAssignment("pc", rowData?.pc_id, values.pc_id, employee._id),
-        updateAssetAssignment("heatset", rowData?.heatset_id, values.heatset_id, employee._id),
-        updateAssetAssignment("laptop", rowData?.laptop_id, values.laptop_id, employee._id),
-        updateAssetAssignment("phone", rowData?.phone_id, values.phone_id, employee._id),
-        updateAssetAssignment("monitor", rowData?.monitor_id, values.monitor_id, employee._id),
+        updateAssetAssignment(
+          "heatset",
+          rowData?.heatset_id,
+          values.heatset_id,
+          employee._id,
+        ),
+        updateAssetAssignment(
+          "laptop",
+          rowData?.laptop_id,
+          values.laptop_id,
+          employee._id,
+        ),
+        updateAssetAssignment(
+          "phone",
+          rowData?.phone_id,
+          values.phone_id,
+          employee._id,
+        ),
+        updateAssetAssignment(
+          "monitor",
+          rowData?.monitor_id,
+          values.monitor_id,
+          employee._id,
+        ),
       ]);
 
       onSave(employee);
@@ -221,14 +291,17 @@ export default function EmployeeForm({
                 />
               ))}
 
-               <FormField
+              <FormField
                 control={form.control}
                 name="department"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Department</FormLabel>
                     <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Department" />
                         </SelectTrigger>
@@ -244,7 +317,6 @@ export default function EmployeeForm({
                   </FormItem>
                 )}
               />
-                       
 
               <FormField
                 control={form.control}
@@ -286,8 +358,6 @@ export default function EmployeeForm({
                 />
               )}
 
-
-
               {/* Mouse */}
               <FormField
                 control={form.control}
@@ -296,7 +366,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>Mouse</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Mouse" />
                         </SelectTrigger>
@@ -321,7 +394,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>Keyboard</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Keyboard" />
                         </SelectTrigger>
@@ -346,7 +422,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>PC</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select PC" />
                         </SelectTrigger>
@@ -371,7 +450,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>heatset</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select heatset" />
                         </SelectTrigger>
@@ -396,7 +478,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>Laptop</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Laptop" />
                         </SelectTrigger>
@@ -421,7 +506,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Phone" />
                         </SelectTrigger>
@@ -445,7 +533,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>Monitor</FormLabel>
                     <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Monitor" />
                         </SelectTrigger>
@@ -469,7 +560,10 @@ export default function EmployeeForm({
                   <FormItem>
                     <FormLabel>Status</FormLabel>
                     <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
@@ -486,11 +580,35 @@ export default function EmployeeForm({
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="note"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Note</FormLabel>
+                    <FormControl>
+                      <textarea
+                        {...field}
+                        rows={4} // Adjust height
+                        placeholder="Add any notes..."
+                        className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        maxLength={500} // optional max length
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit" disabled={formState.isSubmitting} variant="asia">
+                <Button
+                  type="submit"
+                  disabled={formState.isSubmitting}
+                  variant="asia"
+                >
                   {formState.isSubmitting ? "Saving..." : "Save"}
                 </Button>
               </DialogFooter>
@@ -498,6 +616,6 @@ export default function EmployeeForm({
           </Form>
         </div>
       </DialogContent>
-    </Dialog >
+    </Dialog>
   );
 }

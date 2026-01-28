@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Sheet,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "../ui/sheet";
+import { Sheet, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
 import { SheetContent } from "../ui/sheet-content";
 import { IEmployee } from "@/lib/model";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -52,16 +47,15 @@ export default function EmployeeDetails({
   }, [_id, open]);
 
   function formatSriLankaDate(dateString?: string) {
-  if (!dateString) return "—";
+    if (!dateString) return "—";
 
-  return new Intl.DateTimeFormat("en-LK", {
-    timeZone: "Asia/Colombo",
-    year: "numeric",
-    month: "long",
-    day: "2-digit",
-  }).format(new Date(dateString));
-}
-
+    return new Intl.DateTimeFormat("en-LK", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+    }).format(new Date(dateString));
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -98,7 +92,7 @@ export default function EmployeeDetails({
             <div className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Deparment</span>
-                <span>{employee?.department  || "—"}</span>
+                <span>{employee?.department || "—"}</span>
               </div>
 
               <div className="flex justify-between">
@@ -106,7 +100,6 @@ export default function EmployeeDetails({
                 <span>{employee?.employment_type || "—"}</span>
                 {employee?.temp_end_date && (
                   <span>{formatSriLankaDate(employee?.temp_end_date)}</span>
-
                 )}
               </div>
 
@@ -120,30 +113,35 @@ export default function EmployeeDetails({
               <div className="flex justify-between items-start">
                 <span className="text-gray-500">Mouse id</span>
                 <span>{employee?.mouse_id || "—"}</span>
-                </div>
-                <div className="flex justify-between items-start">
-                    <span className="text-gray-500">Keyboard id</span>
-                    <span>{employee?.keyboard_id || "—"}</span>
-                    </div>
-                <div className="flex justify-between items-start">
-                    <span className="text-gray-500">Monitor id</span>
-                    <span>{employee?.monitor_id || "—"}</span>
-                    </div>
-                <div className="flex justify-between items-start">
-                    <span className="text-gray-500">Headset id</span>
-                    <span>{employee?.heatset_id || "—"}</span>
-                    </div>
-                <div className="flex justify-between items-start"></div>
-                    <span className="text-gray-500">Pc id</span>
-                    <span>{employee?.pc_id || "—"}</span>
-                </div>
-                <div className="flex justify-between items-start">
-                    <span className="text-gray-500">Laptop id</span>
-                    <span>{employee?.laptop_id || "—"}</span>
+              </div>
+              <div className="flex justify-between items-start">
+                <span className="text-gray-500">Keyboard id</span>
+                <span>{employee?.keyboard_id || "—"}</span>
+              </div>
+              <div className="flex justify-between items-start">
+                <span className="text-gray-500">Monitor id</span>
+                <span>{employee?.monitor_id || "—"}</span>
+              </div>
+              <div className="flex justify-between items-start">
+                <span className="text-gray-500">Headset id</span>
+                <span>{employee?.heatset_id || "—"}</span>
+              </div>
+              <div className="flex justify-between items-start"></div>
+              <span className="text-gray-500">Pc id</span>
+              <span>{employee?.pc_id || "—"}</span>
             </div>
             <div className="flex justify-between items-start">
-                    <span className="text-gray-500">Heatset id</span>
-                    <span>{employee?.heatset_id || "—"}</span>
+              <span className="text-gray-500">Laptop id</span>
+              <span>{employee?.laptop_id || "—"}</span>
+            </div>
+            <div className="flex justify-between items-start">
+              <span className="text-gray-500">Heatset id</span>
+              <span>{employee?.heatset_id || "—"}</span>
+            </div>
+            <hr className="my-3 dark:border-neutral-800" />
+            <div className="flex justify-between items-start">
+              <span className="text-gray-500">Note</span>
+              <span>{employee?.note || "—"}</span>
             </div>
           </div>
         )}

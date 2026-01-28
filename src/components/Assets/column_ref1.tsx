@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { EditIcon, Trash2 } from "lucide-react";
 import { AssignedEmployee } from "@/lib/model"; 
 
-export const assetColumns = <T extends { _id: string; brand: string;model: string; status: string; ram: string; ssd: string; gen: string; assigned_to?: string | AssignedEmployee | null; }>(
+export const assetColumns = <T extends { _id: string; brand: string;model: string; status: string; ram: string; ssd: string; gen: string; series:string; assigned_to?: string | AssignedEmployee | null; }>(
   onManage: (row: T) => void,
   onDelete: (row: T) => void
 ): ColumnDef<T>[] => [
@@ -36,6 +36,10 @@ export const assetColumns = <T extends { _id: string; brand: string;model: strin
   {
     accessorKey: "gen",
     header: "Generation",
+  },
+  {
+    accessorKey: "series",
+    header: "Series",
   },
  {
     header: "Assigned To",

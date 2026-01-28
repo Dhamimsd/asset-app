@@ -41,6 +41,7 @@ export interface IEmployee {
   status?: string;
   employment_type: "Temporary" | "Permanent";
   temp_end_date?: string;
+  note?:string;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -58,6 +59,7 @@ const EmployeeSchema = new Schema<IEmployee>(
     laptop_id: { type: String, ref: "Laptop", required: false },
     phone_id: { type: String, ref: "Phone", required: false },
     monitor_id: { type: String, ref: "Monitor", required: false },
+    note: { type: String, required: false, default: "" },
     mouse_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     keyboard_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     pc_status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
@@ -229,6 +231,7 @@ export interface IPc {
   ram: string;
   ssd: string;
   gen: string;
+  series:string;
   createdAt?: Date;
   updatedAt?: Date;
   assigned_to?: string | AssignedEmployee | null;
@@ -243,6 +246,7 @@ const PcSchema = new Schema<IPc>(
     ram: { type: String, required: true },
     ssd: { type: String, required: true },
     gen: { type: String, required: true },
+    series: {type:String, requires:true},
     createdAt: { type: Date },
     updatedAt: { type: Date },
     assigned_to: { type: String, ref: "Employee", default: null },
@@ -261,6 +265,7 @@ export interface ILaptop {
   ram: string;
   ssd: string;
   gen: string;
+  series:string;
   createdAt?: Date;
   updatedAt?: Date;
   assigned_to?: string | AssignedEmployee | null;
@@ -275,6 +280,7 @@ const LaptopSchema = new Schema<ILaptop>(
     ram: { type: String, required: true },
     ssd: { type: String, required: true },
     gen: { type: String, required: true },
+    series: {type: String, required: true},
     createdAt: { type: Date },
     updatedAt: { type: Date },
     assigned_to: { type: String, ref: "Employee", default: null },

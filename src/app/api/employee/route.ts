@@ -93,7 +93,7 @@ export async function POST(req: Request) {
     const newId = await getNextEmployeeId();
 
     // Clean empty optional fields
-    const optionalFields = ["keyboard_id","mouse_id","pc_id","heatset_id","laptop_id","phone_id"];
+    const optionalFields = ["keyboard_id","mouse_id","pc_id","heatset_id","laptop_id","phone_id","note"];
     optionalFields.forEach((key) => {
       if (!body[key]) delete body[key];
     });
