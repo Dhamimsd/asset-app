@@ -21,13 +21,20 @@ export const downloadEmployeePDF = (employees: IEmployee[]) => {
 
   autoTable(doc, {
     startY: 30,
-    head: [["#", "Name", "Department", "Status", "Type"]],
+    head: [["#", "Name", "Department", "Status", "Type","Mouse Id","Keyboard Id","PC Id","Headset Id","Laptop Id","Phone Id","Monitor Id"]],
     body: employees.map((e, i) => [
       i + 1,
       e.employee_name || "—",
       e.department || "—",
       e.status || "—",
       e.employment_type || "—",
+      e.mouse_id || "—",
+      e.keyboard_id || "—",
+      e.pc_id || "—",
+      e.heatset_id || "—",
+      e.laptop_id || "—",
+      e.phone_id || "—",
+      e.monitor_id || "—",
     ]),
     styles: {
       fontSize: 9,
