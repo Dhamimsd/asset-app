@@ -126,23 +126,20 @@ export default function EmployeeDetails({
                 <span className="text-gray-500">Headset id</span>
                 <span>{employee?.heatset_id || "—"}</span>
               </div>
-              <div className="flex justify-between items-start"></div>
-              <span className="text-gray-500">Pc id</span>
-              <span>{employee?.pc_id || "—"}</span>
+              <div className="flex justify-between items-start">
+                <span className="text-gray-500">Laptop id</span>
+                <span>{employee?.laptop_id || "—"}</span>
+              </div>
+              <div className="flex justify-between items-start">
+                <span className="text-gray-500">Phone id</span>
+                <span>{employee?.phone_id || "—"}</span>
+              </div>
+              <div className="flex justify-between items-start">
+                <span className="text-gray-500">Pc id</span>
+                <span>{employee?.pc_id || "—"}</span>
+              </div>
             </div>
-            <div className="flex justify-between items-start">
-              <span className="text-gray-500">Laptop id</span>
-              <span>{employee?.laptop_id || "—"}</span>
-            </div>
-            <div className="flex justify-between items-start">
-              <span className="text-gray-500">Heatset id</span>
-              <span>{employee?.heatset_id || "—"}</span>
-            </div>
-            <hr className="my-3 dark:border-neutral-800" />
-            <div className="flex justify-between items-start">
-              <span className="text-gray-500">Note</span>
-              <span>{employee?.note || "—"}</span>
-            </div>
+        
           </div>
         )}
       </SheetContent>

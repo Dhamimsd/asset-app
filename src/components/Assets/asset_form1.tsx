@@ -243,6 +243,20 @@ export default function AssetForm<
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="series"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Series</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <DialogFooter className="flex justify-end space-x-2 pt-4">
                 <DialogClose asChild>
                   <Button type="button" variant="outline">
