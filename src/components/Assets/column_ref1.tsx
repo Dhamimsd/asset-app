@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { EditIcon, Trash2 } from "lucide-react";
 import { AssignedEmployee } from "@/lib/model"; 
 
-export const assetColumns = <T extends { _id: string; brand: string;model: string; status: string; ram: string; ssd: string; gen: string; series:string; assigned_to?: string | AssignedEmployee | null; updatedAt?: Date;}>(
+export const assetColumns = <T extends { _id: string; brand: string;model: string; status: string; ram: string; ssd: string; gen: string; series:string; assigned_to?: string | AssignedEmployee | null; createdAt?: Date; updatedAt?: Date;}>(
   onManage: (row: T) => void,
   onDelete: (row: T) => void
 ): ColumnDef<T>[] => [
@@ -50,6 +50,23 @@ export const assetColumns = <T extends { _id: string; brand: string;model: strin
       return assigned.employee_name;
     },
   },
+  {
+  accessorKey: "createAt",
+  header: "Create At",
+  cell: ({ row }) => {
+    const value = row.original.createdAt;
+    if (!value) return "—";
+
+    return new Date(value).toLocaleString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  },
+},
+
 {
   accessorKey: "updatedAt",
   header: "Updated At",

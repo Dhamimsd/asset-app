@@ -1,7 +1,7 @@
 // app/api/employee/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
-import { Employee, Mouse, Keyboard, Pc, Heatset, Laptop, Phone } from "@/lib/model";
+import { Employee, Mouse, Keyboard, Pc, Heatset, Laptop, Phone,Monitor } from "@/lib/model";
 import mongoose from "mongoose";
 
 // ---------------- Counter for Employee ID ----------------
@@ -38,6 +38,7 @@ export async function GET() {
           heatset_status: "STORE",
           laptop_status: "STORE",
           phone_status: "STORE",
+        monitor_status: "STORE",
         };
 
         try {
@@ -64,6 +65,10 @@ export async function GET() {
           if (emp.phone_id) {
             const phone = await Phone.findById(emp.phone_id).select("status");
             if (phone) assetStatuses.phone_status = phone.status;
+          }
+          if (emp.monitor_id) {
+            const monitor = await Monitor.findById(emp.monitor_id).select("status");
+            if (monitor) assetStatuses.monitor_status = monitor.status;
           }
         } catch (err) {
           console.error("Error fetching asset for employee:", emp._id, err);
@@ -93,7 +98,7 @@ export async function POST(req: Request) {
     const newId = await getNextEmployeeId();
 
     // Clean empty optional fields
-    const optionalFields = ["keyboard_id","mouse_id","pc_id","heatset_id","laptop_id","phone_id","note"];
+    const optionalFields = ["keyboard_id","mouse_id","pc_id","heatset_id","laptop_id","phone_id","monitor_id","note"];
     optionalFields.forEach((key) => {
       if (!body[key]) delete body[key];
     });
