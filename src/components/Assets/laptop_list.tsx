@@ -82,10 +82,10 @@ export default function LaptopPage() {
     const exists = data.find((m) => m._id === laptop._id);
     if (exists) {
       setData((prev) => prev.map((m) => (m._id === laptop._id ? laptop : m)));
-      
+
     } else {
       setData((prev) => [laptop, ...prev]);
-      
+
     }
     setIsFormOpen(false);
   };
@@ -111,8 +111,10 @@ export default function LaptopPage() {
           onClose={() => setIsFormOpen(false)}
           onSave={handleSave}
           apiEndpoint="/api/laptop"
+          assetType="laptop"
           title={selectedLaptop ? "Edit Laptop" : "Add Laptop"}
         />
+
       )}
 
       {/* Delete Confirmation Dialog */}

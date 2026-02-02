@@ -108,14 +108,17 @@ export default function PhonePage() {
 
       {/* AssetForm Dialog */}
       {isFormOpen && (
-        <AssetForm<IPhone>
-          rowData={selectedPhone ?? undefined}
-          onClose={() => setIsFormOpen(false)}
-          onSave={handleSave}
-          apiEndpoint="/api/phone"
-          title={selectedPhone ? "Edit Phone" : "Add Phone"}
-        />
-      )}
+              <AssetForm<IPhone>
+                rowData={selectedPhone ?? undefined}
+                onClose={() => setIsFormOpen(false)}
+                onSave={handleSave}
+                apiEndpoint="/api/phone"
+                assetType="phone"
+                title={selectedPhone ? "Edit Phone" : "Add Phone"}
+              />
+      
+            )}
+      
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

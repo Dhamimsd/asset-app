@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { AssignedEmployee } from "@/lib/model";
 
 export type AssetFormValues = {
   brand: string;
@@ -37,6 +38,7 @@ export type AssetFormValues = {
   ssd: string;
   gen: string;
   series: string;
+  assigned_to?: string | null;
 };
 
 export type AssetFormProps<
@@ -49,12 +51,14 @@ export type AssetFormProps<
     ssd: string;
     gen: string;
     series: string;
-  },
+    assigned_to?: string | AssignedEmployee | null;
+  }
 > = {
   rowData?: T;
   onClose?: () => void;
   onSave: (data: T) => void;
   apiEndpoint: string;
+  assetType: string; // for fetching available employees
   title?: string;
 };
 
@@ -70,8 +74,9 @@ export default function AssetForm<
     ssd: string;
     gen: string;
     series: string;
-  },
->({ rowData, onClose, onSave, apiEndpoint, title }: AssetFormProps<T>) {
+    assigned_to?: string | AssignedEmployee | null;
+  }
+>({ rowData, onClose, onSave, apiEndpoint, assetType, title }: AssetFormProps<T>) {
   const form = useForm<AssetFormValues>({
     defaultValues: {
       brand: rowData?.brand || "",
@@ -81,15 +86,17 @@ export default function AssetForm<
       ssd: rowData?.ssd || "",
       gen: rowData?.gen || "",
       series: rowData?.series || "",
+      assigned_to: typeof rowData?.assigned_to === "string" ? rowData.assigned_to : rowData?.assigned_to?._id ?? "",
     },
   });
 
-  const {
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = form;
+  const [assignees, setAssignees] = useState<
+    { _id: string; employee_name: string; department: string }[]
+  >([]);
 
+  const { handleSubmit, reset, formState: { isSubmitting } } = form;
+
+  // Reset form when editing
   useEffect(() => {
     if (rowData) {
       reset({
@@ -100,16 +107,32 @@ export default function AssetForm<
         ssd: rowData.ssd,
         gen: rowData.gen,
         series: rowData.series,
+        assigned_to: typeof rowData.assigned_to === "string" ? rowData.assigned_to : rowData.assigned_to?._id ?? "",
       });
     }
   }, [rowData, reset]);
+
+  // Fetch available employees
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await fetch(`/api/employee/available/${assetType}`);
+        if (!res.ok) throw new Error("Failed to fetch employees");
+        const data = await res.json();
+        setAssignees(data);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load employees");
+      }
+    };
+
+    fetchEmployees();
+  }, [assetType]);
 
   const onSubmit = async (values: AssetFormValues) => {
     try {
       const method = rowData ? "PUT" : "POST";
       const url = rowData ? `${apiEndpoint}/${rowData._id}` : apiEndpoint;
-
-      // include assigned_to if updating
       const payload = rowData ? { ...rowData, ...values } : values;
 
       const res = await fetch(url, {
@@ -129,7 +152,7 @@ export default function AssetForm<
       onClose?.();
       toast.success(rowData ? "Updated successfully" : "Added successfully");
     } catch (err: any) {
-      console.error(err.message);
+      console.error(err);
       toast.error(err.message || "Something went wrong");
     }
   };
@@ -256,7 +279,35 @@ export default function AssetForm<
                   </FormItem>
                 )}
               />
-
+              {rowData && (
+              <FormField
+                control={form.control}
+                name="assigned_to"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assigned To</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value ?? ""}
+                        onValueChange={(value) => field.onChange(value === "" ? null : value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select employee" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {assignees.map((emp) => (
+                            <SelectItem key={emp._id} value={emp._id}>
+                              {emp.employee_name} — {emp.department}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              )}
               <DialogFooter className="flex justify-end space-x-2 pt-4">
                 <DialogClose asChild>
                   <Button type="button" variant="outline">

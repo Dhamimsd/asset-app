@@ -106,14 +106,16 @@ export default function KeyboardPage() {
 
       {/* AssetForm Dialog */}
       {isFormOpen && (
-        <AssetForm<IKeyboard>
-          rowData={selectedKeyboard ?? undefined}
-          onClose={() => setIsFormOpen(false)}
-          onSave={handleSave}
-          apiEndpoint="/api/keyboard"
-          title={selectedKeyboard ? "Edit Keyboard" : "Add Keyboard"}
-        />
-      )}
+              <AssetForm<IKeyboard>
+                rowData={selectedKeyboard ?? undefined}
+                onClose={() => setIsFormOpen(false)}
+                onSave={handleSave}
+                apiEndpoint="/api/keyboard"
+                assetType="keyboard"
+                title={selectedKeyboard ? "Edit Keyboard" : "Add Keyboard"}
+              />
+      
+            )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

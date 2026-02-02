@@ -82,10 +82,10 @@ export default function HeatsetPage() {
     const exists = data.find((m) => m._id === heatset._id);
     if (exists) {
       setData((prev) => prev.map((m) => (m._id === heatset._id ? heatset : m)));
-      
+
     } else {
       setData((prev) => [heatset, ...prev]);
-      
+
     }
     setIsFormOpen(false);
   };
@@ -111,8 +111,10 @@ export default function HeatsetPage() {
           onClose={() => setIsFormOpen(false)}
           onSave={handleSave}
           apiEndpoint="/api/heatset"
+          assetType="heatset"
           title={selectedHeatset ? "Edit Heatset" : "Add Heatset"}
         />
+
       )}
 
       {/* Delete Confirmation Dialog */}

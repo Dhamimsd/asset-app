@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,33 +28,67 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { AssignedEmployee } from "@/lib/model";
+
+/* ---------------- Types ---------------- */
 
 export type AssetFormValues = {
   brand: string;
-  status: string;
   model: string;
+  status: string;
+  assigned_to?: string | null;
 };
 
 export type AssetFormProps<
-  T extends { _id?: string; brand: string; model: string; status: string },
+  T extends {
+    _id?: string;
+    brand: string;
+    model: string;
+    status: string;
+    assigned_to?: string | AssignedEmployee | null;
+  },
 > = {
   rowData?: T;
   onClose?: () => void;
   onSave: (data: T) => void;
-  apiEndpoint: string; // e.g., "/api/mouse" or "/api/keyboard"
-  title?: string; // Optional custom title
+  apiEndpoint: string;
+  assetType:
+  | "mouse"
+  | "keyboard"
+  | "heatset"
+  | "laptop"
+  | "pc"
+  | "monitor"
+  | "phone";
+  title?: string;
 };
 
 const STATUSES = ["STORE", "USED", "REPAIR"];
 
+/* ---------------- Component ---------------- */
+
 export default function AssetForm<
-  T extends { _id?: string; brand: string; model: string; status: string },
->({ rowData, onClose, onSave, apiEndpoint, title }: AssetFormProps<T>) {
+  T extends {
+    _id?: string;
+    brand: string;
+    model: string;
+    status: string;
+    assigned_to?: string | AssignedEmployee | null;
+  },
+>({
+  rowData,
+  onClose,
+  onSave,
+  apiEndpoint,
+  assetType,
+  title,
+}: AssetFormProps<T>) {
   const form = useForm<AssetFormValues>({
     defaultValues: {
-      brand: rowData?.brand || "",
-      status: rowData?.status || STATUSES[0],
-      model: rowData?.model || "",
+      brand: "",
+      model: "",
+      status: "STORE",
+      assigned_to: "",
     },
   });
 
@@ -64,23 +98,54 @@ export default function AssetForm<
     formState: { isSubmitting },
   } = form;
 
+  const [assignees, setAssignees] = useState<
+    { _id: string; employee_name: string; department: string }[]
+  >([]);
+
+  /* ---------- Load form data when editing ---------- */
   useEffect(() => {
     if (rowData) {
       reset({
         brand: rowData.brand,
-        status: rowData.status,
         model: rowData.model,
+        status: rowData.status,
+        assigned_to:
+        typeof rowData.assigned_to === "string"
+          ? rowData.assigned_to
+          : rowData.assigned_to?._id ?? null,
       });
     }
   }, [rowData, reset]);
 
+  /* ---------- Fetch available employees ---------- */
+  useEffect(() => {
+  const fetchEmployees = async () => {
+    try {
+      const res = await fetch(`/api/employee/available/${assetType}`);
+      if (!res.ok) throw new Error("Failed to fetch employees");
+      const data = await res.json();
+      setAssignees(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load employees");
+    }
+  };
+
+  fetchEmployees();
+}, [assetType]);
+
+
+  /* ---------- Submit ---------- */
   const onSubmit = async (values: AssetFormValues) => {
     try {
       const method = rowData ? "PUT" : "POST";
-      const url = rowData ? `${apiEndpoint}/${rowData._id}` : apiEndpoint;
+      const url = rowData
+        ? `${apiEndpoint}/${rowData._id}`
+        : apiEndpoint;
 
-      // include assigned_to if updating
-      const payload = rowData ? { ...rowData, ...values } : values;
+      const payload = rowData
+        ? { ...rowData, ...values }
+        : values;
 
       const res = await fetch(url, {
         method,
@@ -89,8 +154,8 @@ export default function AssetForm<
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Something went wrong");
+        const err = await res.json();
+        throw new Error(err.error || "Something went wrong");
       }
 
       const data = await res.json();
@@ -99,102 +164,136 @@ export default function AssetForm<
       onClose?.();
       toast.success(rowData ? "Updated successfully" : "Added successfully");
     } catch (err: any) {
-      console.error(err.message);
+      console.error(err);
       toast.error(err.message || "Something went wrong");
     }
   };
 
+  /* ---------------- UI ---------------- */
+
   return (
-    <Dialog open={true} onOpenChange={(open) => !open && onClose?.()}>
+    <Dialog open onOpenChange={(open) => !open && onClose?.()}>
       <DialogContent className="max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="font-semibold text-purple-800 dark:text-purple-600">
             {title || (rowData ? "Edit Asset" : "Add Asset")}
           </DialogTitle>
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[70vh] px-2">
-          <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="brand"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Brand</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Brand */}
+            <FormField
+              control={form.control}
+              name="brand"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Brand</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Model */}
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Model</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Status (edit only) */}
+            {rowData && (
               <FormField
                 control={form.control}
-                name="model"
+                name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Model</FormLabel>
+                    <FormLabel>Status</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {STATUSES.map((s) => (
+                            <SelectItem key={s} value={s}>
+                              {s}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {rowData && (
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {STATUSES.map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {status}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            )}
+
+            {rowData && (
+            <FormField
+              control={form.control}
+              name="assigned_to"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Assigned To</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={(value) =>
+                        field.onChange(value === "" ? null : value)
+                      }
+                    >
+
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select employee" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {assignees.map((emp) => (
+                          <SelectItem key={emp._id} value={emp._id}>
+                            {emp.employee_name} — {emp.department}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <DialogFooter className="flex justify-end space-x-2 pt-4">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  variant="asia"
-                  size="sm"
-                >
-                  {isSubmitting
-                    ? rowData
-                      ? "Updating..."
-                      : "Saving..."
-                    : rowData
-                      ? "Update"
-                      : "Save"}
+            />)}
+
+            {/* Footer */}
+            <DialogFooter className="flex justify-end gap-2 pt-4">
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
                 </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </div>
+              </DialogClose>
+              <Button type="submit" disabled={isSubmitting} variant="asia">
+                {isSubmitting
+                  ? rowData
+                    ? "Updating..."
+                    : "Saving..."
+                  : rowData
+                    ? "Update"
+                    : "Save"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

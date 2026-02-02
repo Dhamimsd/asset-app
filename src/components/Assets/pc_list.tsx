@@ -84,10 +84,10 @@ export default function PcPage() {
     const exists = data.find((m) => m._id === pc._id);
     if (exists) {
       setData((prev) => prev.map((m) => (m._id === pc._id ? pc : m)));
-      
+
     } else {
       setData((prev) => [pc, ...prev]);
-      
+
     }
     setIsFormOpen(false);
   };
@@ -113,8 +113,10 @@ export default function PcPage() {
           onClose={() => setIsFormOpen(false)}
           onSave={handleSave}
           apiEndpoint="/api/pc"
+          assetType="pc"
           title={selectedPc ? "Edit PC" : "Add PC"}
         />
+
       )}
 
       {/* Delete Confirmation Dialog */}

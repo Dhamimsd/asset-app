@@ -106,14 +106,17 @@ export default function MousePage() {
 
       {/* AssetForm Dialog */}
       {isFormOpen && (
-        <AssetForm<IMouse>
-          rowData={selectedMouse ?? undefined}
-          onClose={() => setIsFormOpen(false)}
-          onSave={handleSave}
-          apiEndpoint="/api/mouse"
-          title={selectedMouse ? "Edit Mouse" : "Add Mouse"}
-        />
-      )}
+              <AssetForm<IMouse>
+                rowData={selectedMouse ?? undefined}
+                onClose={() => setIsFormOpen(false)}
+                onSave={handleSave}
+                apiEndpoint="/api/mouse"
+                assetType="mouse"
+                title={selectedMouse ? "Edit Mouse" : "Add Mouse"}
+              />
+      
+            )}
+      
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

@@ -1,29 +1,44 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
-import { Monitor } from "@/lib/model";
+import { Monitor, Employee } from "@/lib/model";
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectDB();
 
-    // Grab everything from request body
     const body = await req.json();
+    const monitorId = params.id;
 
-    // Optional: validate status
+    // Validate status if provided
     if (body.status && !["STORE", "USED", "REPAIR"].includes(body.status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
-    // Update monitor with all fields sent in body
+    // 1️⃣ Update the asset (Monitor)
     const updatedMonitor = await Monitor.findOneAndUpdate(
-      { _id: params.id },
-      { $set: body },   // <--- important: $set updates only sent fields
+      { _id: monitorId },
+      { $set: body },
       { new: true, runValidators: true }
     );
 
     if (!updatedMonitor) {
       return NextResponse.json({ error: "Monitor not found" }, { status: 404 });
+    }
+
+    // 2️⃣ If assigned_to is provided, update the employee
+    if (body.assigned_to) {
+      const employeeId = body.assigned_to;
+
+      await Employee.findByIdAndUpdate(
+        employeeId,
+        {
+          $set: {
+            monitor_id: monitorId,
+            monitor_status: "USED",
+          },
+        },
+        { new: true }
+      );
     }
 
     return NextResponse.json(updatedMonitor, { status: 200 });
@@ -33,13 +48,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-
-// DELETE: remove monitor by _id
+// DELETE remains unchanged
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectDB();
     const deleted = await Monitor.findByIdAndDelete(params.id);
-
     if (!deleted) {
       return NextResponse.json({ error: "Monitor not found" }, { status: 404 });
     }

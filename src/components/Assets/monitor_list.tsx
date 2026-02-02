@@ -105,15 +105,18 @@ export default function MonitorPage() {
       />
 
       {/* AssetForm Dialog */}
-      {isFormOpen && (
-        <AssetForm<IMonitor>
-          rowData={selectedMonitor ?? undefined}
-          onClose={() => setIsFormOpen(false)}
-          onSave={handleSave}
-          apiEndpoint="/api/monitor"
-          title={selectedMonitor ? "Edit Monitor" : "Add Monitor"}
-        />
-      )}
+     {isFormOpen && (
+             <AssetForm<IMonitor>
+               rowData={selectedMonitor ?? undefined}
+               onClose={() => setIsFormOpen(false)}
+               onSave={handleSave}
+               apiEndpoint="/api/monitor"
+               assetType="monitor"
+               title={selectedMonitor ? "Edit Monitor" : "Add Monitor"}
+             />
+     
+           )}
+     
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
