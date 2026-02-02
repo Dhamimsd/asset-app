@@ -2,35 +2,52 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
 import { Laptop, Employee } from "@/lib/model";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
 
     const body = await req.json();
     const laptopId = params.id;
+    const { assigned_to } = body;
 
-    // Validate status if provided
-    if (body.status && !["STORE", "USED", "REPAIR"].includes(body.status)) {
-      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-    }
-
-    // 1️⃣ Update the asset (Laptop)
-    const updatedLaptop = await Laptop.findOneAndUpdate(
-      { _id: laptopId },
-      { $set: body },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedLaptop) {
+    /* ---------------- 1️⃣ Get existing laptop ---------------- */
+    const oldLaptop = await Laptop.findById(laptopId);
+    if (!oldLaptop) {
       return NextResponse.json({ error: "Laptop not found" }, { status: 404 });
     }
 
-    // 2️⃣ If assigned_to is provided, update the employee
-    if (body.assigned_to) {
-      const employeeId = body.assigned_to;
+    /* ---------------- 2️⃣ Remove from old employee (if changed) ---------------- */
+    if (
+      oldLaptop.assigned_to &&
+      oldLaptop.assigned_to !== assigned_to
+    ) {
+      await Employee.findByIdAndUpdate(oldLaptop.assigned_to, {
+        $unset: { laptop_id: "" },
+        $set: { laptop_status: "STORE" },
+      });
+    }
 
+    /* ---------------- 3️⃣ Update laptop ---------------- */
+    const updatedLaptop = await Laptop.findByIdAndUpdate(
+      laptopId,
+      {
+        $set: {
+          brand: body.brand,
+          serial_no: body.serial_no,
+          assigned_to: assigned_to || null,
+          status: assigned_to ? "USED" : "STORE",
+        },
+      },
+      { new: true, runValidators: true }
+    );
+
+    /* ---------------- 4️⃣ Assign to new employee ---------------- */
+    if (assigned_to) {
       await Employee.findByIdAndUpdate(
-        employeeId,
+        assigned_to,
         {
           $set: {
             laptop_id: laptopId,
@@ -48,14 +65,28 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-// DELETE remains unchanged
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+/* ---------------- DELETE ---------------- */
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
-    const deleted = await Laptop.findByIdAndDelete(params.id);
-    if (!deleted) {
+
+    const laptop = await Laptop.findById(params.id);
+    if (!laptop) {
       return NextResponse.json({ error: "Laptop not found" }, { status: 404 });
     }
+
+    // Cleanup employee if assigned
+    if (laptop.assigned_to) {
+      await Employee.findByIdAndUpdate(laptop.assigned_to, {
+        $unset: { laptop_id: "" },
+        $set: { laptop_status: "STORE" },
+      });
+    }
+
+    await Laptop.findByIdAndDelete(params.id);
 
     return NextResponse.json({ message: "Deleted successfully" }, { status: 200 });
   } catch (error: any) {

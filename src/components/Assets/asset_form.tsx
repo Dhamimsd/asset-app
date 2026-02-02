@@ -34,7 +34,7 @@ import { AssignedEmployee } from "@/lib/model";
 
 export type AssetFormValues = {
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   assigned_to?: string | null;
 };
@@ -43,7 +43,7 @@ export type AssetFormProps<
   T extends {
     _id?: string;
     brand: string;
-    model: string;
+    serial_no: string;
     status: string;
     assigned_to?: string | AssignedEmployee | null;
   },
@@ -71,7 +71,7 @@ export default function AssetForm<
   T extends {
     _id?: string;
     brand: string;
-    model: string;
+    serial_no: string;
     status: string;
     assigned_to?: string | AssignedEmployee | null;
   },
@@ -86,7 +86,7 @@ export default function AssetForm<
   const form = useForm<AssetFormValues>({
     defaultValues: {
       brand: "",
-      model: "",
+      serial_no: "",
       status: "STORE",
       assigned_to: "",
     },
@@ -107,7 +107,7 @@ export default function AssetForm<
     if (rowData) {
       reset({
         brand: rowData.brand,
-        model: rowData.model,
+        serial_no: rowData.serial_no,
         status: rowData.status,
         assigned_to:
         typeof rowData.assigned_to === "string"
@@ -182,7 +182,7 @@ export default function AssetForm<
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Brand */}
+            {/* model */}
             <FormField
               control={form.control}
               name="brand"
@@ -200,10 +200,10 @@ export default function AssetForm<
             {/* Model */}
             <FormField
               control={form.control}
-              name="model"
+              name="serial_no"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Model</FormLabel>
+                  <FormLabel>Serial No</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

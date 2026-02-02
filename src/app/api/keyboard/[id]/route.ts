@@ -2,35 +2,52 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/database";
 import { Keyboard, Employee } from "@/lib/model";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
 
     const body = await req.json();
     const keyboardId = params.id;
+    const { assigned_to } = body;
 
-    // Validate status if provided
-    if (body.status && !["STORE", "USED", "REPAIR"].includes(body.status)) {
-      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-    }
-
-    // 1️⃣ Update the asset (Keyboard)
-    const updatedKeyboard = await Keyboard.findOneAndUpdate(
-      { _id: keyboardId },
-      { $set: body },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedKeyboard) {
+    /* ---------------- 1️⃣ Get existing keyboard ---------------- */
+    const oldKeyboard = await Keyboard.findById(keyboardId);
+    if (!oldKeyboard) {
       return NextResponse.json({ error: "Keyboard not found" }, { status: 404 });
     }
 
-    // 2️⃣ If assigned_to is provided, update the employee
-    if (body.assigned_to) {
-      const employeeId = body.assigned_to;
+    /* ---------------- 2️⃣ Remove from old employee (if changed) ---------------- */
+    if (
+      oldKeyboard.assigned_to &&
+      oldKeyboard.assigned_to !== assigned_to
+    ) {
+      await Employee.findByIdAndUpdate(oldKeyboard.assigned_to, {
+        $unset: { keyboard_id: "" },
+        $set: { keyboard_status: "STORE" },
+      });
+    }
 
+    /* ---------------- 3️⃣ Update keyboard ---------------- */
+    const updatedKeyboard = await Keyboard.findByIdAndUpdate(
+      keyboardId,
+      {
+        $set: {
+          brand: body.brand,
+          serial_no: body.serial_no,
+          assigned_to: assigned_to || null,
+          status: assigned_to ? "USED" : "STORE",
+        },
+      },
+      { new: true, runValidators: true }
+    );
+
+    /* ---------------- 4️⃣ Assign to new employee ---------------- */
+    if (assigned_to) {
       await Employee.findByIdAndUpdate(
-        employeeId,
+        assigned_to,
         {
           $set: {
             keyboard_id: keyboardId,
@@ -48,14 +65,28 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-// DELETE remains unchanged
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+/* ---------------- DELETE ---------------- */
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
-    const deleted = await Keyboard.findByIdAndDelete(params.id);
-    if (!deleted) {
+
+    const keyboard = await Keyboard.findById(params.id);
+    if (!keyboard) {
       return NextResponse.json({ error: "Keyboard not found" }, { status: 404 });
     }
+
+    // Cleanup employee if assigned
+    if (keyboard.assigned_to) {
+      await Employee.findByIdAndUpdate(keyboard.assigned_to, {
+        $unset: { keyboard_id: "" },
+        $set: { keyboard_status: "STORE" },
+      });
+    }
+
+    await Keyboard.findByIdAndDelete(params.id);
 
     return NextResponse.json({ message: "Deleted successfully" }, { status: 200 });
   } catch (error: any) {

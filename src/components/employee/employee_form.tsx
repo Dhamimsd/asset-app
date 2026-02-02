@@ -376,7 +376,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availableMice.map((m) => (
                             <SelectItem key={m._id} value={m._id}>
-                              {m._id} - {m.brand}
+                              {m._id} - {m.brand} - {m.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -404,7 +404,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availableKeyboards.map((k) => (
                             <SelectItem key={k._id} value={k._id}>
-                              {k._id} - {k.brand}
+                              {k._id} - {k.brand} - {k.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -432,7 +432,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availablePcs.map((p) => (
                             <SelectItem key={p._id} value={p._id}>
-                              {p._id} - {p.brand}
+                              {p._id} - {p.brand} - {p.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -460,7 +460,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availableheatsets.map((h) => (
                             <SelectItem key={h._id} value={h._id}>
-                              {h._id} - {h.brand}
+                              {h._id} - {h.brand} - {h.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -488,7 +488,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availableLaptops.map((l) => (
                             <SelectItem key={l._id} value={l._id}>
-                              {l._id} - {l.brand}
+                              {l._id} - {l.brand} - {l.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -516,7 +516,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availablePhones.map((pn) => (
                             <SelectItem key={pn._id} value={pn._id}>
-                              {pn._id} - {pn.brand}
+                              {pn._id} - {pn.brand} - {pn.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -543,7 +543,7 @@ export default function EmployeeForm({
                         <SelectContent>
                           {availableMonitors.map((mo) => (
                             <SelectItem key={mo._id} value={mo._id}>
-                              {mo._id} - {mo.brand}
+                              {mo._id} - {mo.brand} - {mo.serial_no}
                             </SelectItem>
                           ))}
                         </SelectContent>

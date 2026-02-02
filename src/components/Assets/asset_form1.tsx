@@ -33,7 +33,7 @@ import { AssignedEmployee } from "@/lib/model";
 export type AssetFormValues = {
   brand: string;
   status: string;
-  model: string;
+  serial_no: string;
   ram: string;
   ssd: string;
   gen: string;
@@ -45,7 +45,7 @@ export type AssetFormProps<
   T extends {
     _id?: string;
     brand: string;
-    model: string;
+    serial_no: string;
     status: string;
     ram: string;
     ssd: string;
@@ -68,7 +68,7 @@ export default function AssetForm<
   T extends {
     _id?: string;
     brand: string;
-    model: string;
+    serial_no: string;
     status: string;
     ram: string;
     ssd: string;
@@ -80,8 +80,8 @@ export default function AssetForm<
   const form = useForm<AssetFormValues>({
     defaultValues: {
       brand: rowData?.brand || "",
+      serial_no: rowData?.serial_no || "",
       status: rowData?.status || STATUSES[0],
-      model: rowData?.model || "",
       ram: rowData?.ram || "",
       ssd: rowData?.ssd || "",
       gen: rowData?.gen || "",
@@ -101,8 +101,8 @@ export default function AssetForm<
     if (rowData) {
       reset({
         brand: rowData.brand,
+        serial_no: rowData.serial_no,
         status: rowData.status,
-        model: rowData.model,
         ram: rowData.ram,
         ssd: rowData.ssd,
         gen: rowData.gen,
@@ -184,10 +184,10 @@ export default function AssetForm<
 
               <FormField
                 control={form.control}
-                name="model"
+                name="serial_no"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Model</FormLabel>
+                    <FormLabel>Serial No</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

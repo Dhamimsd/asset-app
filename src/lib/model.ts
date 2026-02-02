@@ -96,7 +96,7 @@ export interface AssignedEmployee {
 export interface IMouse {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -107,7 +107,7 @@ const MouseSchema = new Schema<IMouse>(
   {
     _id: { type: String, required: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     createdAt: { type: Date },
     updatedAt: { type: Date },
@@ -121,7 +121,7 @@ export const Mouse = models.Mouse || model<IMouse>("Mouse", MouseSchema, "mouse_
 export interface IKeyboard {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -132,7 +132,7 @@ const KeyboardSchema = new Schema<IKeyboard>(
   {
     _id: { type: String, required: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     createdAt: { type: Date },
     updatedAt: { type: Date },
@@ -148,7 +148,7 @@ export const Keyboard = models.Keyboard || model<IKeyboard>("Keyboard", Keyboard
 export interface IHeatset {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -158,8 +158,8 @@ export interface IHeatset {
 const heatsetSchema = new Schema<IHeatset>(
   {
     _id: { type: String, required: true },
-    brand: { type: String, required: true },
-    model: { type: String, required: true },
+   brand: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     createdAt: { type: Date },
     updatedAt: { type: Date },
@@ -174,7 +174,7 @@ export const Heatset = models.Heatset || model<IHeatset>("Heatset", heatsetSchem
 export interface IPhone {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -185,7 +185,7 @@ const phoneSchema = new Schema<IPhone>(
   {
     _id: { type: String, required: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     createdAt: { type: Date },
     updatedAt: { type: Date },
@@ -200,7 +200,7 @@ export const Phone = models.Phone || model<IPhone>("Phone", phoneSchema, "phone_
 export interface IMonitor {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -211,7 +211,7 @@ const monitorSchema = new Schema<IMonitor>(
   {
     _id: { type: String, required: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     createdAt: { type: Date },
     updatedAt: { type: Date },
@@ -226,7 +226,7 @@ export const Monitor = models.Monitor || model<IMonitor>("Monitor", monitorSchem
 export interface IPc {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   ram: string;
   ssd: string;
@@ -241,7 +241,7 @@ const PcSchema = new Schema<IPc>(
   {
     _id: { type: String, required: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     ram: { type: String, required: true },
     ssd: { type: String, required: true },
@@ -260,7 +260,7 @@ export const Pc = models.Pc || model<IPc>("Pc", PcSchema, "pc_asset");
 export interface ILaptop {
   _id: string; // <-- string ID
   brand: string;
-  model: string;
+  serial_no: string;
   status: string;
   ram: string;
   ssd: string;
@@ -275,7 +275,7 @@ const LaptopSchema = new Schema<ILaptop>(
   {
     _id: { type: String, required: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    serial_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     ram: { type: String, required: true },
     ssd: { type: String, required: true },
