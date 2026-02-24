@@ -38,7 +38,7 @@ export async function PUT(
          brand: body.brand,
           serial_no: body.serial_no,
           assigned_to: assigned_to || null,
-          status: assigned_to ? "USED" : "STORE",
+          status: body.status,
         },
       },
       { new: true, runValidators: true }
