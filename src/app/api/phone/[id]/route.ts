@@ -25,16 +25,16 @@ export async function GET(
       .populate<{ employee: any }>("employee_id", "_id employee_name department")
       .lean();
 
-    const history = historyRaw.map((h) => ({
-      employee: h.employee
-        ? {
-            _id: h.employee._id,
-            employee_name: h.employee.employee_name,
-            department: h.employee.department,
-          }
-        : null,
-      assigned_at: h.assigned_at.toISOString(),
-    }));
+    const history = historyRaw.map((h: any) => ({
+  employee: h.employee_id
+    ? {
+        _id: h.employee_id._id,
+        employee_name: h.employee_id.employee_name,
+        department: h.employee_id.department,
+      }
+    : null,
+  assigned_at: h.assigned_at.toISOString(),
+}));
 
     // Return phone with history
     return NextResponse.json({ ...phone, history }, { status: 200 });
