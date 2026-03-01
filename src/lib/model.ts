@@ -175,10 +175,15 @@ export interface IPhone {
   _id: string; // <-- string ID
   brand: string;
   serial_no: string;
+  phone_no:string;
   status: string;
   createdAt?: Date;
   updatedAt?: Date;
   assigned_to?: string | AssignedEmployee | null;
+  history?: {
+    employee: AssignedEmployee | null;
+    assigned_at: string;
+  }[];
 }
 
 const phoneSchema = new Schema<IPhone>(
@@ -186,6 +191,7 @@ const phoneSchema = new Schema<IPhone>(
     _id: { type: String, required: true },
     brand: { type: String, required: true },
     serial_no: { type: String, required: true },
+    phone_no: { type: String, required: true },
     status: { type: String, enum: ["STORE", "USED", "REPAIR"], default: "STORE" },
     createdAt: { type: Date },
     updatedAt: { type: Date },
@@ -246,7 +252,7 @@ const PcSchema = new Schema<IPc>(
     ram: { type: String, required: true },
     ssd: { type: String, required: true },
     gen: { type: String, required: true },
-    series: {type:String, requires:true},
+    series: {type:String, required:true},
     createdAt: { type: Date },
     updatedAt: { type: Date },
     assigned_to: { type: String, ref: "Employee", default: null },
@@ -290,3 +296,20 @@ const LaptopSchema = new Schema<ILaptop>(
 );
 
 export const Laptop = models.Laptop || model<ILaptop>("Laptop", LaptopSchema, "laptop_asset");
+
+export interface IPhoneHistory extends Document {
+  phone_id: string;
+  employee_id: string | null;
+  assigned_at: Date;
+}
+
+const PhoneHistorySchema = new Schema<IPhoneHistory>(
+  {
+    phone_id: { type: String, required: true, ref: "Phone" },
+    employee_id: { type: String, ref: "Employee", default: null },
+    assigned_at: { type: Date, default: Date.now },
+  },
+  { timestamps: true }
+);
+
+export const PhoneHistory = models.PhoneHistory || model<IPhoneHistory>("PhoneHistory", PhoneHistorySchema, "phone_history");

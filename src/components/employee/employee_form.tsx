@@ -20,6 +20,7 @@ import {
   ILaptop,
   IPhone,
   IMonitor,
+  IPhoneHistory
 } from "@/lib/model";
 import { Input } from "../ui/input";
 import {
@@ -111,20 +112,32 @@ function useAvailableAssets<T>(asset: string) {
   return data;
 }
 
+
 async function updateAssetAssignment(
   assetType: AssetType,
   oldId: string | undefined,
   newId: string | undefined,
   employeeId: string,
 ) {
+  // If old asset exists and is different → mark it as STORE
   if (oldId && oldId !== newId) {
     await fetch(`/api/${assetType}/${oldId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "STORE", assigned_to: null }),
     });
+
+    // ✅ Only for phone, log the previous assignment
+    if (assetType === "phone") {
+      await fetch("/api/phone/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone_id: oldId, employee_id: employeeId }),
+      });
+    }
   }
 
+  // Assign new asset
   if (newId) {
     await fetch(`/api/${assetType}/${newId}`, {
       method: "PUT",
@@ -133,7 +146,6 @@ async function updateAssetAssignment(
     });
   }
 }
-
 /* -------------------- COMPONENT -------------------- */
 
 export default function EmployeeForm({

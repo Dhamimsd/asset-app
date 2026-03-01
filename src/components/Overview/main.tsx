@@ -46,7 +46,7 @@ export default function Main({ assetType }: { assetType: string }) {
   
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
+      <div className="flex items-center justify-center ">
         <Spinner className="h-10 w-10 text-purple-800" />
       </div>
     );

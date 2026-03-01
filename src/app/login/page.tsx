@@ -35,7 +35,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/dashboard/overview");
     } catch (err) {
       setError("Something went wrong");
       console.error(err);

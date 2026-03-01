@@ -104,8 +104,8 @@ export default function EmployeeDetails({
               </div>
 
               <div className="flex justify-between">
-                <span className="text-gray-500"></span>
-                <span>{employee?.status || "—"}</span>
+                <span className="text-gray-500">Note</span>
+                <span>{employee?.note || "—"}</span>
               </div>
 
               <hr className="my-3 dark:border-neutral-800" />

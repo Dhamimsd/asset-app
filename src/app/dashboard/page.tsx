@@ -29,7 +29,7 @@ export default function DashboardPage() {
         const employees = await empRes.json();
 
         // Fetch assets counts for each type
-        const assetTypes = ["mouse", "keyboard", "pc", "laptop", "headset", "phone", "monitor"];
+        const assetTypes = ["mouse", "keyboard", "pc", "laptop", "heatset", "phone", "monitor"];
         const assetCounts: any = {};
 
         await Promise.all(

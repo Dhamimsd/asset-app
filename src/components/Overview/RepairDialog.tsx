@@ -18,16 +18,17 @@ type RepairAsset = {
 type Props = {
   open: boolean;
   onClose: () => void;
-  assets: RepairAsset[];
+  assets?: RepairAsset[]; // make optional
 };
 
 export default function RepairDialog({
   open,
   onClose,
-  assets,
+  assets = [], // default empty array
 }: Props) {
-  console.log("Dialog open:", open);
-  console.log("Repair assets:", assets);
+
+  // Ensure it's always an array
+  const safeAssets = Array.isArray(assets) ? assets : [];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -37,19 +38,19 @@ export default function RepairDialog({
         </DialogHeader>
 
         <div className="space-y-3">
-          {assets.length === 0 && (
+          {safeAssets.length === 0 && (
             <p className="text-sm text-muted-foreground">
               No assets in repair.
             </p>
           )}
 
-          {assets.map(asset => (
+          {safeAssets.map((asset) => (
             <div
               key={asset.id}
               className="flex items-center justify-between border p-3 rounded-md"
             >
               <div>
-                <p className="font-medium">{asset.name}</p>
+                <p className="font-medium">Employee ID : {asset.assigned_to}</p>
                 <p className="text-xs text-muted-foreground">
                   ID: {asset.id}
                 </p>
@@ -67,7 +68,7 @@ export default function RepairDialog({
         <Button
           onClick={onClose}
           className="mt-4 w-full"
-          variant="asiasecondary"
+          variant="secondary"
         >
           Close
         </Button>

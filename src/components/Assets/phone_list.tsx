@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { DataTable } from "@/components/ui/data-table";
-import { assetColumns } from "./column_ref";
+import { assetColumns } from "./column_phone";
 import { IPhone } from "@/lib/model";
 import { Button } from "../ui/button";
-import AssetForm from "./asset_form";
+import AssetForm from "./assetPhone_form";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -80,17 +80,18 @@ export default function PhonePage() {
   };
 
   // Save handler (Add or Update)
-  const handleSave = (phone: IPhone) => {
-    const exists = data.find((m) => m._id === phone._id);
-    if (exists) {
-      setData((prev) => prev.map((m) => (m._id === phone._id ? phone : m)));
-      
-    } else {
-      setData((prev) => [phone, ...prev]);
-      
-    }
-    setIsFormOpen(false);
-  };
+  const handleSave = async (phone: IPhone) => {
+  const exists = data.find((m) => m._id === phone._id);
+  if (exists) {
+    setData((prev) => prev.map((m) => (m._id === phone._id ? phone : m)));
+  } else {
+    setData((prev) => [phone, ...prev]);
+  }
+  setIsFormOpen(false);
+
+  // Refetch phones so the table shows updated assigned_to immediately
+  await fetchPhones();
+};
 
   return (
     <div className="space-y-6 py-5">
